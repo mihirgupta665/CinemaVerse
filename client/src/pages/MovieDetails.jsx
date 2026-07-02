@@ -4,6 +4,7 @@ import { dummyDateTimeData, dummyShowsData } from '../assets/assets'
 import BlurCircle from '../components/BlurCircle'
 import { Heart, PlayCircleIcon, StarIcon } from "lucide-react"
 import timeFormat from '../lib/timeFormat'
+import DateSelect from '../components/DateSelect'
 
 const MovieDetails = () => {
 
@@ -68,11 +69,13 @@ const MovieDetails = () => {
                         {show.movie.casts.slice(0,12).map( (cast, index) => (
                             <div key={index} className='flex flex-col items-center text-center'>
                                 <img src={cast.profile_path} alt="" className='rounded-full h-20 md:h-20 aspect-square object-cover'/>
-                                <p>{cast.name}</p>
+                                <p className='font-medium text-xm mt-3'>{cast.name}</p>
                             </div>
                         ))  }
                     </div>
                 </div>
+
+                <DateSelect dateTime={show.dateTime} id={id} />
 
             </div>
         )
