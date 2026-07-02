@@ -6,4 +6,6 @@
 
 - Implement Rputing using BrowserRouter, Routes, Route all url form element renedering.
 
-- Add Toaster as sibling of Routes to make it available for all the webpages
+- Add Toaster as sibling of Routes to make it available for all the webpages react-hot-toast
+
+- prebuiltui.com to get the prebuilt components
