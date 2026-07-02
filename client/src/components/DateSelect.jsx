@@ -1,18 +1,18 @@
 import React, { useState } from 'react'
 import BlurCircle from './BlurCircle'
 import { ChevronLeftIcon, ChevronRightIcon } from 'lucide-react'
-import toast from 'react-hot-toast'
+import { toast } from 'react-toastify'
 import { useNavigate } from 'react-router-dom'
 
 const DateSelect = ({ dateTime, id }) => {
 
     const navigate = useNavigate()
 
-    const [selected, setSelected] = useState("null")
+    const [selected, setSelected] = useState(null)
 
     const onBookHandler = () => {
         if(!selected){
-            return toast("Please Select a Date of Booking")
+            return toast.error("Please Select a Date of Booking")
         }
         navigate(`/movies/${id}/${selected}`)
         scrollTo(0,0)
@@ -31,7 +31,7 @@ const DateSelect = ({ dateTime, id }) => {
                             {/* what does Object.keys do */}
                             {/* Object.keys returns an array of all the key of the object */}
                             {Object.keys(dateTime).map((date) => (
-                                <button key={date} className={`flex flex-col items-center justify-center h-14 w-14 aspect-square rounded cursor-pointer ${selected === date}`}>
+                                <button onClick={() => setSelected(date)} key={date} className={`flex flex-col items-center justify-center h-14 w-14 aspect-square rounded cursor-pointer ${selected === date ? "bg-primary text-white" : "border border-primary/70"} `}>
                                     <span>{new Date(date).getDate()}</span>
                                     {/* format in US format string for date and show the month only in short form too */}
                                     <span>{new Date(date).toLocaleDateString("en-US", {month: "short"})}</span>

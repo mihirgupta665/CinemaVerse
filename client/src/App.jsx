@@ -7,7 +7,8 @@ import MovieDetails from './pages/MovieDetails'
 import SeatLayout from './pages/SeatLayout'
 import MyBookings from './pages/MyBookings'
 import Favorite from './pages/Favorite'
-import {Toaster} from "react-hot-toast"
+import { ToastContainer } from 'react-toastify'
+import 'react-toastify/dist/ReactToastify.css'
 import Footer from './components/Footer'
 
 const App = () => {
@@ -18,7 +19,7 @@ const App = () => {
     return (
 
         <>
-            <Toaster />
+            <ToastContainer autoClose={3000} theme="dark" />
             {!isAdminRoute && <Navbar />}
             <Routes>
 
