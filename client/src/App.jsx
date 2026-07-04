@@ -10,6 +10,11 @@ import Favorite from './pages/Favorite'
 import { ToastContainer } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css'
 import Footer from './components/Footer'
+import Layout from './pages/admin/layout'
+import Dashboard from './pages/admin/Dashboard'
+import AddShows from './pages/admin/AddShows'
+import ListShows from './pages/admin/ListShows'
+import ListBookings from './pages/admin/ListBookings'
 
 const App = () => {
 
@@ -29,6 +34,12 @@ const App = () => {
                 <Route path="/movies/:id/:date" element={ <SeatLayout /> } />
                 <Route path="/my-bookings" element={ <MyBookings /> } />
                 <Route path="/favorite" element={ <Favorite /> } />
+
+                <Route path="/admin/*" element={<Layout /> }> 
+                    <Route index element={<Dashboard />} />
+                    <Route path="add-shows" element={<AddShows />}  />
+                    <Route path="list-bookings" element={<ListBookings />}  />
+                </Route>
 
             </Routes>
             {!isAdminRoute && <Footer />}
