@@ -1,9 +1,13 @@
 import React from 'react'
+import { Link } from "react-router-dom"
+import { assets } from '../../assets/assets'
 
 const AdminNavbar = () => {
   return (
-    <div>
-        
+      <div className='flex items-center justify-between px-6 pt-2 md:px-10 h-auto border-b border-gray-300/30'>
+        <Link to="/admin">
+            <img src={assets.logo} alt="Admin Logo" className='w-36 h-auto'/>
+        </Link>
     </div>
   )
 }
