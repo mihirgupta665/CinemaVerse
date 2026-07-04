@@ -15,3 +15,5 @@
 - getfunction to load the state from the database or api call and execute it whenever the component gets loaded use useEffect
 
 - during component display in return add the ternary operator to display things only when data is loaded else display a circle
+
+- const { name: username } = person;      means =>     const username = person.name
