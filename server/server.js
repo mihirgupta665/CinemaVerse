@@ -12,7 +12,7 @@ app.use(cors())
 
 
 // API Routes
-app.get("/", (req, res) => { res.send(`Server is live at PORT : ${port}` ) })
+app.get("/", (req, res) => { res.send(`Server is live` ) })
 
 app.listen(port, () => { console.log(`Sever Listening at http://localhost:${port}` ); })
 
