@@ -28,3 +28,4 @@ client/.env
 server/node_modules
 server/.env
 notes.md
+.env
