@@ -24,3 +24,5 @@ dist-ssr
 *.sw?
 
 client/node_modules
+server/node_modules
+notes.md
