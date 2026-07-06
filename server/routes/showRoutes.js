@@ -1,10 +1,11 @@
 import express from "express"
-import { getNowPlayingMovies } from "./showControllers.js"
+import { addShow, getNowPlayingMovies } from "../controllers/showControllers.js"
 
 const showRouter = express.Router()
 
 showRouter.get("/now-playing", getNowPlayingMovies)
-
+showRouter.post("/add", addShow)
+ 
 
 
 
