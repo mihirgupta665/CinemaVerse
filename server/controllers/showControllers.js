@@ -125,6 +125,7 @@ export const getShow = async (req, res) => {
         // get All upcoming shows for the movie 
         const shows = await Show.find({movie: movieId, showDateTime: {$gte : new Date()}})
 
+        // get movie gte current date otherwise just no dateTime will be visible
         const movie = await Movie.findById(movieId);
         const dateTime = {}; 
 
