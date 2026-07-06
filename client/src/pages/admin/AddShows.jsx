@@ -57,9 +57,8 @@ const AddShows = () => {
             <>
                 <Title text1="Add" text2="Shows" />
                 <p className='mt-10 text-lg font-medium'>Now Playing Movies</p>
-                <div className='overflow-x-auto pb-4 no-scrollbar'>
-                    {/* <div className='overflow-x-auto pb-4'> */}
-                    <div className='group flex flex-wrap gap-4 mt-4 w-max '>
+                <div className='overflow-x-auto pb-4 custom-scrollbar'>
+                    <div className='group flex gap-4 mt-4 w-max '>
                         {nowPlayingMovies.map((movie) => (
                             <div key={movie.id} onClick={() => setSelectedMovie(movie.id)} className={`relative max-w-40 cursor-pointer group-hover:not-hover:opacity-60 hover:-translate-y-1 transition duration-300`}>
                                 <div className='relative rounded-lg overflow-hidden'>
@@ -129,7 +128,7 @@ const AddShows = () => {
                 )}
 
                 <button className="bg-primary text-white px-8 py-2 mt-6 rounded hover:bg-primary/85 transition-all cursor-pointer" >
-                Add Show
+                    Add Show
                 </button>
 
             </>

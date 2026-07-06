@@ -1,30 +1,84 @@
 @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@100..900&display=swap');
 @import "tailwindcss";
 
-@theme{
+@theme {
     --color-primary: #F84565;
     --color-primary-dull: #D63854;
 }
 
-*{
+* {
     font-family: "Outfit", sans-serif;
-    scrollbar-width: thin;
-    scrollbar-color: #787777 #1e1e1e ;
 }
 
-body{
+body {
     color: white;
     background-color: #09090B;
 }
 
-.no-scrollbar{
+/* ===========================
+   Premium CinemaVerse Scrollbar
+=========================== */
+
+.custom-scrollbar {
+    scrollbar-width: thin;
+    scrollbar-color: #b91c1c #0f0f10;
+}
+
+/* Size */
+.custom-scrollbar::-webkit-scrollbar {
+    height: 8px;
+    width: 8px;
+}
+
+/* Track */
+.custom-scrollbar::-webkit-scrollbar-track {
+    background: #0f0f10;
+    border-radius: 999px;
+    margin: 6px;
+}
+
+/* Thumb */
+.custom-scrollbar::-webkit-scrollbar-thumb {
+    background: #c91111;
+    border-radius: 999px;
+    border: 2px solid #0f0f10;
+    transition: background .25s ease, transform .2s ease;
+}
+
+/* Hover on scroll area */
+.custom-scrollbar:hover::-webkit-scrollbar-thumb {
+    background: #991b1b;
+}
+
+/* Hover on thumb */
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+    background: #7f1d1d;
+}
+
+/* Dragging */
+.custom-scrollbar::-webkit-scrollbar-thumb:active {
+    background: #7a1414;
+}
+
+/* Hide Scrollbar Utility */
+
+.no-scrollbar {
     scrollbar-width: none;
 }
+
+.no-scrollbar::-webkit-scrollbar {
+    display: none;
+}
+
+/* Remove Number Input Arrows */
 
 input::-webkit-outer-spin-button,
 input::-webkit-inner-spin-button {
     -webkit-appearance: none;
+    margin: 0;
 }
+
+/* Calendar Icon */
 
 ::-webkit-calendar-picker-indicator {
     filter: invert(1);
