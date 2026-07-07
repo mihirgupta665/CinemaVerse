@@ -1,6 +1,6 @@
-import Booking from "../models/Booking"
-import Show from "../models/Show";
-import User from "../models/User";
+import Booking from "../models/Booking.js"
+import Show from "../models/Show.js";
+import User from "../models/User.js";
 
 // Controller function to check if user is Admin
 export const isAdmin = async (req, res) => {
@@ -33,28 +33,47 @@ export const getDashboardData = async (req, res) => {
             totalUser
         }
 
-        res.json({success:true, dashboardData})
+        res.json({ success: true, dashboardData })
 
     }
     catch (error) {
-        console.log("Error occured during fetching the data of Booking, Shows and  totaluser count from the database. Error : ",error)
-        res.json({success:false, message:error.message})
+        console.log("Error occured during fetching the data of Booking, Shows and  totaluser count from the database. Error : ", error)
+        res.json({ success: false, message: error.message })
     }
 }
 
 
 // API controller function to get all the shows for the admin dashboard
 export const getAllShows = async (req, res) => {
-    
+
     try {
-        
-        const shows = await Show.find({showDateTime: {$gte: new Date() } }).populate("movie").sort({showDateTime : -1})
-        res.json({success:true, shows})
+
+        const shows = await Show.find({ showDateTime: { $gte: new Date() } }).populate("movie").sort({ showDateTime: -1 })
+        res.json({ success: true, shows })
 
     }
     catch (error) {
-        
+        console.log("Error Occured during fetching of all the shows from the admin dashboard. Error : ", error)
+        res.json({ success: false, error: message.error })
     }
+}
 
+
+// API to get all bookings
+export const getAllBookings = async (req, res) => {
+
+    try {
+
+        const bookings = await Booking.find({}).populate("user").populate({
+            path: "show",
+            populate: { path: "movie" },
+        }).sort({ createdAt: -1 })
+
+        res.json({ success: true, bookings })
+
+    }
+    catch (error) {
+
+    }
 
 }
