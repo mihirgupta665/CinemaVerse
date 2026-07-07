@@ -17,10 +17,10 @@ const checkSeatAvailability = async (showId, selectedSeats) => {
         const isAnySeatTaken = selectedSeats.some(seat => occupiedSeats[seat]);
 
         return !isAnySeatTaken
-
+ 
     }
     catch (error) {
-        console.log("Error occured during finding the show and cheking the selecgted seat is in the ocuupied seat list in database. Error : ", error);
+        console.log("Error occured during finding the show and checking the selected seat is in the occupied seat list in database. Error : ", error);
         return false;
     }
 }
