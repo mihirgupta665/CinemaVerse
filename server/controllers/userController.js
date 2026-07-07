@@ -59,3 +59,28 @@ export const updateFavorite = async (req, res) => {
 }
 
 
+// API controller fucntion to get the favorites movies list
+export const getFavorites = async (req, res) => {
+
+    try {
+
+        const { userId } = req.auth()
+
+        const user = await clerkClient.users.getUser(userId)
+
+        const favorites = await user.privateMetadata.favorites
+        if (!favorites) {
+            res.json({ success: false, message: "No Movie in Favorites List.\n Add your first movie in Favorites!" })
+        }
+
+        const movies = await Movie.find({ _id: { $in: favorites } })
+
+        res.json({ success: true, movies })
+
+    }
+    catch (error) {
+        console.log("Error occured during geting the favorites movie list from user private metadata from clerk database. Error : ", error)
+        res.json({ success: false, message: error.message })
+    }
+
+}
