@@ -25,6 +25,8 @@ const checkSeatAvailability = async (showId, selectedSeats) => {
     }
 }
 
+
+// Controller function to create a booking for the selected seats and updating databse for show's seats.
 export const createBooking = async (req, res) => {
 
     try {
@@ -71,4 +73,23 @@ export const createBooking = async (req, res) => {
     }
 }
 
- 
+
+// Controller function to get the occupied seats
+export const getOccupiedSeats = async (req, res) => {
+
+    try {
+
+        const {showId} = req.params;
+        const showData = await Show.findById(showData)
+
+        const occupiedSeats = Object.keys(showData.occupiedSeats)  // returns array of string for seats
+
+        res.json({success:true, occupiedSeats})
+
+    }
+    catch (error) {
+        console.log("Error occured during fetching the occupied seat for the specified show. Erro : ",error)
+        res.json({success:false, message:error.message})
+    }
+
+}
