@@ -88,7 +88,7 @@ export const getOccupiedSeats = async (req, res) => {
 
     }
     catch (error) {
-        console.log("Error occured during fetching the occupied seat for the specified show. Erro : ",error)
+        console.log("Error occured during fetching the occupied seat for the specified show. Error : ",error)
         res.json({success:false, message:error.message})
     }
 

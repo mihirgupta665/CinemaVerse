@@ -33,9 +33,28 @@ export const getDashboardData = async (req, res) => {
             totalUser
         }
 
+        res.json({success:true, dashboardData})
 
     }
     catch (error) {
+        console.log("Error occured during fetching the data of Booking, Shows and  totaluser count from the database. Error : ",error)
+        res.json({success:false, message:error.message})
+    }
+}
+
+
+// API controller function to get all the shows for the admin dashboard
+export const getAllShows = async (req, res) => {
+    
+    try {
+        
+        const shows = await Show.find({showDateTime: {$gte: new Date() } }).populate("movie").sort({showDateTime : -1})
+        res.json({success:true, shows})
 
     }
+    catch (error) {
+        
+    }
+
+
 }
