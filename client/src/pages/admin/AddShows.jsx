@@ -6,6 +6,7 @@ import { CheckIcon, DeleteIcon, StarIcon } from "lucide-react"
 import { kConvertor } from '../../lib/kConvertor';
 import { useAppContext } from '../../context/AppContext';
 import { toast } from 'react-toastify';
+// button dynamic styling
 
 const AddShows = () => {
 
@@ -95,12 +96,24 @@ const AddShows = () => {
             }
 
             const { data } = axios.post("/api/show/add", payload, { headers: { Authorization: `Bearer ${await getToken}` } })
+            console.log(data);
 
+            if(data.success){
+                toast.success(data.message)
+                setSelectedMovie(null)
+                setDateTimeSelection({})
+                setShowPrice("") 
+            }
+            else{
+                toast.error(data.message)
+            }
 
         }
         catch (error) {
-
+            console.log("Error Occured while simulating an API call to add the Show in now playing movies list. Error : ",error);
+            toast.error(error.message)
         }
+        setAddingShow(false)
     }
 
     return nowPlayingMovies.length > 0

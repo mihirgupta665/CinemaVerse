@@ -27,7 +27,7 @@ const getTmdbRequestConfig = () => {
     return requestConfig;
 };
 
-// API to get now playing movies from TMDB API
+
 // API to get now playing movies from TMDB API
 export const getNowPlayingMovies = async (req, res) => {
     const MAX_RETRIES = 3;
@@ -100,7 +100,7 @@ export const addShows = async (req, res) => {
 
             const movieApiData = movieDetailsResponse.data;
             const movieCreditsData = movieCreditsResponse.data;
-            // console.log("Movie Credits Data of response : ", movieCreditsResponse)
+            console.log("Movie Credits Data of response : ", movieCreditsResponse)
 
             const movieDetails = {
                 _id: movieId,
@@ -118,7 +118,7 @@ export const addShows = async (req, res) => {
             }
 
             const moviedoc = await Movie.create(movieDetails); 
-            console.log(movieDetails);
+            // console.log(movieDetails);
         }
 
         // showInput is array of object of date
@@ -138,12 +138,14 @@ export const addShows = async (req, res) => {
             })
         }); 
 
-        if(showsToCreate.length > 0){
+        if(showsToCreate.length > 1){
             await Show.insertMany(showsToCreate)
+            res.json({ success: true, message: "Shows Added Successfully!" })
         }
-
-        res.json({success:true, message: "Show Added Successfully!"})
-        
+        else if(showsToCreate.length === 1){
+            await Show.insertMany(showsToCreate)
+            res.json({ success: true, message: "Show Added Successfully!" })
+        }
 
     }
     catch (error) {
