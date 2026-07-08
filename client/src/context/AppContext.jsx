@@ -70,7 +70,12 @@ export const AppProvider = ({ children }) => {
                 setFavoriteMovies(data.movies)
             }
             else {
-                toast.error(data.message)
+                if(data.message.includes("No Movie") && location.pathname.includes("favorite")){
+                    toast.error(data.message)
+                }
+                else if(data.message.includes("Error")){
+                    toast.error(data.message)
+                }
             }
 
 
@@ -93,6 +98,12 @@ export const AppProvider = ({ children }) => {
             fetchFavoriteMovies()
         }
     }, [user])
+
+    useEffect(() => {
+        if(location.pathname.startsWith("/favorite")){
+            fetchFavoriteMovies()
+        }
+    }, [location, user])
 
 
     const value = {
