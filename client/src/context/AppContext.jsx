@@ -29,39 +29,33 @@ export const AppProvider = ({ children }) => {
             const { data } = axios.get("/api/admin/is-admin", { headers: { Authorization: `Bearer ${await getToken()}` } })
             setIsAdmin(data.isAdmin)
 
-            if(!data.isAdmin && location.pathname.startsWith("/admin") ){
+            if (!data.isAdmin && location.pathname.startsWith("/admin")) {
                 toast.warn("You Are not Authorized as Admin!")
                 navigate("/")
             }
 
         }
-        catch(error) {
-            console.log("Error Occured while fetching the user admin authorization from backend and clerk. Error : ",error)
+        catch (error) {
+            console.log("Error Occured while fetching the user admin authorization from backend and clerk. Error : ", error)
         }
     }
-
-    useEffect(() => {
-        if(user){
-            fetchIsAdmin()
-        }
-    }, [user])
 
 
     // Function to get all the shows for the user
     const fetchShows = async () => {
         try {
-        
-            const {data} = await axios.get("/api/show/all")
-            if(data.success){
+
+            const { data } = await axios.get("/api/show/all")
+            if (data.success) {
                 setShows(data.shows)
             }
-            else{
+            else {
                 toast.error(data.message)
             }
 
-        } 
-        catch(error) {
-            console.log("Error occured while fetching all the shows from backend. Error : ",error);
+        }
+        catch (error) {
+            console.log("Error occured while fetching all the shows from backend. Error : ", error);
         }
     }
 
@@ -69,7 +63,21 @@ export const AppProvider = ({ children }) => {
     // Function to get all the favorites movies of the user
     const fetchFavoriteMovies = async () => {
 
-        
+        try {
+
+            const { data } = await axios.get("/api/user/favorites", { headers: { Authorization: `Bearer ${await getToken()}` } })
+            if (data.success) {
+                setFavoriteMovies(data.movies)
+            }
+            else {
+                toast.error(data.message)
+            }
+
+
+        }
+        catch (error) {
+            console.log("Error occured while fetching the favorites movies of the user. Error : ", error)
+        }
 
     }
 
@@ -79,23 +87,33 @@ export const AppProvider = ({ children }) => {
         fetchShows()
     }, [])
 
-
-
-    const fetchFavoriteMovies = async () => {
-
-
-
-    }
-
+    useEffect(() => {
+        if (user) {
+            fetchIsAdmin()
+            fetchFavoriteMovies()
+        }
+    }, [user])
 
 
     const value = {
+
         axios,
-        isAdmin, setIsAdmin,
-        shows, setShows,
-        favoriteMovies, setFavoriteMovies,
+        navigate,
 
+        user,
+        getToken,
+        location,
 
+        isAdmin,
+        fetchIsAdmin,
+
+        shows,
+        fetchShows,
+
+        favoriteMovies,
+        fetchFavoriteMovies,
+        
+        
     }
 
     return (

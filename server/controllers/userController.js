@@ -70,7 +70,7 @@ export const getFavorites = async (req, res) => {
 
         const favorites = await user.privateMetadata.favorites
         if (!favorites) {
-            res.json({ success: false, message: "No Movie in Favorites List.\n Add your first movie in Favorites!" })
+            res.json({ success: false, message: "No Movie in Favorites List.\n Add your first movie as Favorite!" })
         }
 
         const movies = await Movie.find({ _id: { $in: favorites } })
