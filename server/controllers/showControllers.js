@@ -2,23 +2,80 @@ import axios from "axios"
 import Movie from "../models/Movie.js";
 import Show from "../models/Show.js";
 
+const getTmdbRequestConfig = () => {
+    const tmdbCredential = process.env.TMDB_API_KEY;
+
+    if (!tmdbCredential) {
+        throw new Error("TMDB_API_KEY is missing in the server environment.");
+    }
+
+    const requestConfig = {
+        timeout: 10000,
+    };
+
+    // TMDB v4 tokens are used as Bearer tokens. Older v3 keys are sent as query params.
+    if (tmdbCredential.includes(".")) {
+        requestConfig.headers = {
+            Authorization: `Bearer ${tmdbCredential}`,
+        };
+    } else {
+        requestConfig.params = {
+            api_key: tmdbCredential,
+        };
+    }
+
+    return requestConfig;
+};
+
+// API to get now playing movies from TMDB API
 // API to get now playing movies from TMDB API
 export const getNowPlayingMovies = async (req, res) => {
+    const MAX_RETRIES = 3;
+
     try {
+        let data;
 
-        const { data } = await axios.get("https://api.themoviedb.org/3/movie/now_playing", {
-            headers: { Authorization: `Bearer ${process.env.TMDB_API_KEY}` }
-        })
+        for (let attempt = 1; attempt <= MAX_RETRIES; attempt++) {
+            try {
+                const response = await axios.get(
+                    "https://api.themoviedb.org/3/movie/now_playing",
+                    getTmdbRequestConfig()
+                );
 
-        const movies = data.results;
-        res.json({ success: true, movies: movies })
+                data = response.data;
+                break; // Request successful
+            } catch (error) {
+                console.log(`Attempt ${attempt} failed.`);
+                console.log("TMDB status:", error.response?.status);
+                console.log("TMDB details:", error.response?.data || error.message);
 
+                // If this was the last attempt, throw the error
+                if (attempt === MAX_RETRIES) {
+                    throw error;
+                }
+
+                // Wait 1 second before retrying
+                await new Promise(resolve => setTimeout(resolve, 1000));
+            }
+        }
+
+        return res.json({
+            success: true,
+            movies: data?.results || [],
+        });
+
+    } catch (error) {
+        console.log(
+            "Error occurred during the API call for fetching movies from the TMDB database:",
+            error.response?.data || error.message
+        );
+
+        return res.status(500).json({
+            success: false,
+            message: error.response?.data?.status_message || error.message,
+        });
     }
-    catch (error) {
-        console.log("Error occured during the api call for fetching movies from the TMDB database. Error : ", error)
-        res.json({ success: false, message: error.message })
-    }
-}
+};
 
 // API to add a new show to the database
 export const addShows = async (req, res) => {
@@ -34,10 +91,10 @@ export const addShows = async (req, res) => {
             const [movieDetailsResponse, movieCreditsResponse] = await Promise.all([
 
                 axios.get(`https://api.themoviedb.org/3/movie/${movieId}`,
-                    { headers: { Authorization: `Bearer ${process.env.TMDB_API_KEY}` } }),
+                    getTmdbRequestConfig()),
 
                 axios.get(`https://api.themoviedb.org/3/movie/${movieId}/credits`, 
-                    { headers: { Authorization: `Bearer ${process.env.TMDB_API_KEY}` } })
+                    getTmdbRequestConfig())
                 
             ]);
 
