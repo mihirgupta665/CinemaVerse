@@ -8,7 +8,7 @@ showRouter.get("/now-playing", protectAdmin, getNowPlayingMovies)
 showRouter.post("/add", protectAdmin, addShows)
 showRouter.get("/all", getShows)
 showRouter.get("/:movieId", getShow)
- 
+
 
 
 

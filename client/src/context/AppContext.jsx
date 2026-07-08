@@ -32,12 +32,12 @@ export const AppProvider = ({ children }) => {
             const { data } = await axios.get("/api/admin/is-admin", { headers: { Authorization: `Bearer ${await getToken()}` } })
             // console.log("Data : ",data)
             setIsAdmin(data.isAdmin)
-            
+
             if (!data.isAdmin && location.pathname.startsWith("/admin")) {
                 toast.warn("You Are not Authorized as Admin!")
-                navigate("/") 
+                navigate("/")
             }
-            
+
         }
         catch (error) {
             console.log("Error Occured while fetching the user admin authorization from backend and clerk. Error : ", error)
@@ -58,7 +58,7 @@ export const AppProvider = ({ children }) => {
             }
 
         }
-        catch (error){
+        catch (error) {
             console.log("Error occured while fetching all the shows from backend. Error : ", error);
         }
     }
@@ -74,10 +74,10 @@ export const AppProvider = ({ children }) => {
                 setFavoriteMovies(data.movies)
             }
             else {
-                if(data.message.includes("No Movie") && location.pathname.includes("favorite")){
+                if (data.message.includes("No Movie") && location.pathname.includes("favorite")) {
                     toast.error(data.message)
                 }
-                else if(data.message.includes("Error")){
+                else if (data.message.includes("Error")) {
                     toast.error(data.message)
                 }
             }
@@ -104,7 +104,7 @@ export const AppProvider = ({ children }) => {
     }, [user])
 
     useEffect(() => {
-        if(location.pathname.startsWith("/favorite")){
+        if (location.pathname.startsWith("/favorite")) {
             fetchFavoriteMovies()
         }
     }, [location, user])
@@ -129,8 +129,8 @@ export const AppProvider = ({ children }) => {
 
         favoriteMovies,
         fetchFavoriteMovies,
-        
-        
+
+
     }
 
     return (
