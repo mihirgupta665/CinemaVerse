@@ -5,6 +5,7 @@ import { useLocation, useNavigate } from "react-router-dom"
 import { toast } from "react-toastify"
 
 axios.defaults.baseURL = import.meta.env.VITE_BASE_URL
+const image_base_url = import.meta.env.VITE_TMDB_IMAGE_BASE_URL;
 
 export const AppContext = createContext()
 
@@ -21,19 +22,22 @@ export const AppProvider = ({ children }) => {
     const [favoriteMovies, setFavoriteMovies] = useState([])
 
 
+
+
     // Function to check that user is admin or not
     const fetchIsAdmin = async () => {
 
         try {
 
-            const { data } = axios.get("/api/admin/is-admin", { headers: { Authorization: `Bearer ${await getToken()}` } })
+            const { data } = await axios.get("/api/admin/is-admin", { headers: { Authorization: `Bearer ${await getToken()}` } })
+            // console.log("Data : ",data)
             setIsAdmin(data.isAdmin)
-
+            
             if (!data.isAdmin && location.pathname.startsWith("/admin")) {
                 toast.warn("You Are not Authorized as Admin!")
-                navigate("/")
+                navigate("/") 
             }
-
+            
         }
         catch (error) {
             console.log("Error Occured while fetching the user admin authorization from backend and clerk. Error : ", error)
@@ -54,7 +58,7 @@ export const AppProvider = ({ children }) => {
             }
 
         }
-        catch (error) {
+        catch (error){
             console.log("Error occured while fetching all the shows from backend. Error : ", error);
         }
     }
@@ -110,6 +114,8 @@ export const AppProvider = ({ children }) => {
 
         axios,
         navigate,
+
+        image_base_url,
 
         user,
         getToken,
