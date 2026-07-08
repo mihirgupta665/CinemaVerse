@@ -21,6 +21,7 @@ export const AppProvider = ({ children }) => {
     const [favoriteMovies, setFavoriteMovies] = useState([])
 
 
+    // Function to check that user is admin or not
     const fetchIsAdmin = async () => {
 
         try {
@@ -46,19 +47,44 @@ export const AppProvider = ({ children }) => {
     }, [user])
 
 
-
+    // Function to get all the shows for the user
     const fetchShows = async () => {
         try {
         
-            const {data} = await axios.get("/api/admin/all-shows")
+            const {data} = await axios.get("/api/show/all")
             if(data.success){
                 setShows(data.shows)
+            }
+            else{
+                toast.error(data.message)
             }
 
         } 
         catch(error) {
-
+            console.log("Error occured while fetching all the shows from backend. Error : ",error);
         }
+    }
+
+
+    // Function to get all the favorites movies of the user
+    const fetchFavoriteMovies = async () => {
+
+        
+
+    }
+
+
+
+    useEffect(() => {
+        fetchShows()
+    }, [])
+
+
+
+    const fetchFavoriteMovies = async () => {
+
+
+
     }
 
 

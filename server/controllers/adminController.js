@@ -54,7 +54,7 @@ export const getAllShows = async (req, res) => {
     }
     catch (error) {
         console.log("Error Occured during fetching of all the shows from the admin dashboard. Error : ", error)
-        res.json({ success: false, error: message.error })
+        res.json({ success: false, message: error.message })
     }
 }
 
