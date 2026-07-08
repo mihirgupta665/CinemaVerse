@@ -20,18 +20,27 @@ const ListBookings = () => {
         try {
 
             const { data } = await axios.get("/api/admin/all-bookings", { headers: { Authorization: `Bearer ${await getToken()}` } })
-            if 
+
+            if(data.success){
+                setBookings(data.bookings)
+                setIsLoading(false)
+            }
+            else{
+                toast.error(error.message);
+            }
+
         }
         catch (error) {
-
+            console.log("Error occured while reaching to the API to get all the booking data from the backend for the Admin panel. Error : ",error)
         }
-
 
     }
 
     useEffect(() => {
-        getAllBookings()
-    }, [])
+        if(user){
+            getAllBookings()
+        }
+    }, [user])
 
 
     return !isLoading ? (
