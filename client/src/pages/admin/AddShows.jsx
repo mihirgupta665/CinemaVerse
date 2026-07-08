@@ -82,7 +82,8 @@ const AddShows = () => {
             setAddingShow(true)
 
             if (!selectedMovie || Object.keys(dateTimeSelection).length === 0 || !showPrice) {
-                return toast("Missing required input fields for Show details")
+                toast.error("Missing required input fields for Show details")
+                return
             }
 
             const showsInput = Object.entries(dateTimeSelection).map(([date, time]) => (
@@ -95,13 +96,14 @@ const AddShows = () => {
                 showPrice: Number(showPrice)
             }
 
-            const { data } = axios.post("/api/show/add", payload, { headers: { Authorization: `Bearer ${await getToken}` } })
-            console.log(data);
+            const { data } = await axios.post("/api/show/add", payload, { headers: { Authorization: `Bearer ${await getToken()}` } })
+            // console.log(data);
 
             if(data.success){
                 toast.success(data.message)
                 setSelectedMovie(null)
                 setDateTimeSelection({})
+                setDateTimeInput("")
                 setShowPrice("") 
             }
             else{
@@ -113,7 +115,9 @@ const AddShows = () => {
             console.log("Error Occured while simulating an API call to add the Show in now playing movies list. Error : ",error);
             toast.error(error.message)
         }
-        setAddingShow(false)
+        finally{
+            setAddingShow(false)
+        }
     }
 
     return nowPlayingMovies.length > 0

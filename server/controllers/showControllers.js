@@ -30,7 +30,7 @@ const getTmdbRequestConfig = () => {
 
 // API to get now playing movies from TMDB API
 export const getNowPlayingMovies = async (req, res) => {
-    const MAX_RETRIES = 3;
+    const MAX_RETRIES = 5;
 
     try {
         let data;
@@ -100,7 +100,7 @@ export const addShows = async (req, res) => {
 
             const movieApiData = movieDetailsResponse.data;
             const movieCreditsData = movieCreditsResponse.data;
-            console.log("Movie Credits Data of response : ", movieCreditsResponse)
+            // console.log("Movie Credits Data of response : ", movieCreditsResponse)
 
             const movieDetails = {
                 _id: movieId,
