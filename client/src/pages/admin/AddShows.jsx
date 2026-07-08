@@ -12,7 +12,7 @@ const AddShows = () => {
 
     const currency = import.meta.env.VITE_CURRENCY
 
-    const { axios, getToken, user, navigate, fetchIsAdmin, image_base_url } = useAppContext()
+    const { axios, getToken, user, navigate, image_base_url } = useAppContext()
 
     const [nowPlayingMovies, setNowPlayingMovies] = useState([]);
     const [selectedMovie, setSelectedMovie] = useState(null);
@@ -20,6 +20,15 @@ const AddShows = () => {
     const [dateTimeInput, setDateTimeInput] = useState("");
     const [showPrice, setShowPrice] = useState("");
     const [addingShow, setAddingShow] = useState(false);
+
+    const enableAddButton = () => {
+        if (selectedMovie && Object.keys(dateTimeSelection).length>0 && showPrice ){
+            return true
+        }
+        else{
+            return false
+        }
+    }
 
     const fetchNowPlayingMovies = async () => {
 
@@ -60,6 +69,8 @@ const AddShows = () => {
             }
             return prev;
         });
+
+        setDateTimeInput("")
     };
 
     const handleRemoveTime = (date, time) => {
@@ -82,7 +93,7 @@ const AddShows = () => {
             setAddingShow(true)
 
             if (!selectedMovie || Object.keys(dateTimeSelection).length === 0 || !showPrice) {
-                toast.error("Missing required input fields for Show details")
+                toast.warning("Missing required input fields for Show details")
                 return
             }
 
@@ -195,7 +206,7 @@ const AddShows = () => {
                     </div>
                 )}
 
-                <button onClick={handleSubmit} disabled={addingShow} className="bg-primary text-white px-8 py-2 mt-6 rounded hover:bg-primary/85 transition-all cursor-pointer" >
+                <button onClick={handleSubmit} disabled={addingShow} className={`text-white px-8 py-2 mt-6 rounded transition-all cursor-pointer ${enableAddButton() ? "bg-primary hover:bg-primary/85" : "bg-primary/50"}`} >
                     Add Show
                 </button>
 

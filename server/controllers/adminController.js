@@ -13,7 +13,7 @@ export const getDashboardData = async (req, res) => {
 
         const bookings = await Booking.find({ isPaid: true });
 
-        const activeShows = await Show.find({ showDateTime: { $gte: new Date() } }).populate("movie")
+        const activeShows = await Show.find({ showDateTime: { $gte: new Date() } }).populate("movie").sort({ showDatetime : -1})
 
         const totalUser = await User.countDocuments();
 
@@ -73,7 +73,8 @@ export const getAllBookings = async (req, res) => {
 
     }
     catch (error) {
-
+        console.log("Error occured during fetching all the bookings data for the database. Error : ",error)
+        res.json({success:false, message:error.message})
     }
 
 }
