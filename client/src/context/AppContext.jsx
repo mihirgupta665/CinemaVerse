@@ -99,12 +99,11 @@ export const AppProvider = ({ children }) => {
     useEffect(() => {
         if (user) {
             fetchIsAdmin()
-            fetchFavoriteMovies()
         }
     }, [user])
 
     useEffect(() => {
-        if (location.pathname.startsWith("/favorite")) {
+        if (location.pathname.startsWith("/favorite") && user   ) {
             fetchFavoriteMovies()
         }
     }, [location, user])

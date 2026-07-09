@@ -124,7 +124,7 @@ const AddShows = () => {
         }
         catch (error) {
             console.log("Error Occured while simulating an API call to add the Show in now playing movies list. Error : ",error);
-            toast.error(error.message)
+            toast.error("Network Error Please Try Again\n"+error.message)
         }
         finally{
             setAddingShow(false)
