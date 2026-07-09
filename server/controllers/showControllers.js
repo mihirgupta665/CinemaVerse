@@ -88,15 +88,45 @@ export const addShows = async (req, res) => {
 
         if (!movie) {
             // fetch movie details and credits from the TMDB API
-            const [movieDetailsResponse, movieCreditsResponse] = await Promise.all([
+            // Fetch movie details and credits from TMDB API with retry
+            let movieDetailsResponse, movieCreditsResponse;
 
-                axios.get(`https://api.themoviedb.org/3/movie/${movieId}`,
-                    getTmdbRequestConfig()),
+            const MAX_RETRIES = 5;
 
-                axios.get(`https://api.themoviedb.org/3/movie/${movieId}/credits`, 
-                    getTmdbRequestConfig())
-                
-            ]);
+            for (let attempt = 1; attempt <= MAX_RETRIES; attempt++) {
+                try {
+
+                    [movieDetailsResponse, movieCreditsResponse] = await Promise.all([
+
+                        axios.get(
+                            `https://api.themoviedb.org/3/movie/${movieId}`,
+                            getTmdbRequestConfig()
+                        ),
+
+                        axios.get(
+                            `https://api.themoviedb.org/3/movie/${movieId}/credits`,
+                            getTmdbRequestConfig()
+                        )
+
+                    ]);
+
+                    // Success
+                    break;
+
+                } catch (error) {
+
+                    console.log(`TMDB attempt ${attempt} failed.`);
+                    console.log("TMDB status:", error.response?.status);
+                    console.log("TMDB details:", error.response?.data || error.message);
+
+                    if (attempt === MAX_RETRIES) {
+                        throw error;
+                    }
+
+                    // Wait 1 second before retrying
+                    await new Promise(resolve => setTimeout(resolve, 1000));
+                }
+            }
 
             const movieApiData = movieDetailsResponse.data;
             const movieCreditsData = movieCreditsResponse.data;

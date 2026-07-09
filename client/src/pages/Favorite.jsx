@@ -16,14 +16,14 @@ const Favorite = () => {
         );
     }
 
-    let c=0;
+    // let c=0;
 
     useEffect(() => {
 
-        if(user && c){
+        if(user){
             fetchFavoriteMovies()
         }
-        c++;
+        // c++;
 
     }, [user])
 
@@ -46,6 +46,7 @@ const Favorite = () => {
             <div className='flex flex-col items-center justify-center h-screen'>
                 <h1 className='text-3xl font-bold text-center'>Sorry! No Favorite Movies Available</h1>
                 <h5 className='text-lg mt-4 font-bold text-center'>Lets Add your first movie to favorites list</h5>
+                <button onClick={() => { navigate("/movies"); scrollTo(0, 0) }} className='mt-15 px-10 py-3 text-sm bg-primary hover:bg-primary-dull transition rounded-md font-medium cursor-pointer'>Get a Favorite</button>
             </div>
         )
 }
