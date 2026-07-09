@@ -92,8 +92,9 @@ const SeatLayout = () => {
             const {data} = await axios.post("/api/booking/create", { showId : selectedTime.showId, selectedSeats }, { headers: {Authorization : `Bearer ${await getToken()}` } })
 
             if(data.success){
-                navigate("/my-bookings")
                 toast.success(data.message)
+                navigate("/my-bookings")
+                scrollTo(0,0)
             }
             else{
                 toast.error(data.message)
@@ -101,7 +102,7 @@ const SeatLayout = () => {
 
         }
         catch (error) {
-            console.log("Error occured while reaching the API for booking of tickets for the Show. Error : ",error)
+            console.log("Error occured while reaching the API for booking of tickets for the Show. Error : ",error) 
         }
     }
 
@@ -181,7 +182,7 @@ const SeatLayout = () => {
 
                     </div>
 
-                    <button onClick={() => { navigate("/my-bookings"); scrollTo(0, 0) }} className='flex items-center gap-1 mt-20 px-10 py-3 text-sm bg-primary hover:bg-primary-dull transition rounded-full font-medium cursor-pointer active:scale-95'>
+                    <button onClick={bookTickets} className='flex items-center gap-1 mt-20 px-10 py-3 text-sm bg-primary hover:bg-primary-dull transition rounded-full font-medium cursor-pointer active:scale-95'>
                         Proceed to Checkout
                         <ArrowRightIcon strokeWidth={3} className='w-4 h-4' />
                     </button>
