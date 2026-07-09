@@ -65,6 +65,7 @@ export const createBooking = async (req, res) => {
         // Stripe Gateway Initialize
 
         res.json({success: true, message: "Booked Successfully"})
+        // res.json({success: true, message: `Movie ${showData.movie.title} Booked Successfully`})
 
     }
     catch (error) {
@@ -80,7 +81,7 @@ export const getOccupiedSeats = async (req, res) => {
     try {
 
         const {showId} = req.params;
-        const showData = await Show.findById(showData)
+        const showData = await Show.findById(showId)
 
         const occupiedSeats = Object.keys(showData.occupiedSeats)  // returns array of string for seats
 

@@ -103,7 +103,7 @@ export const AppProvider = ({ children }) => {
     }, [user])
 
     useEffect(() => {
-        if (user   ) {
+        if (user) {
             fetchFavoriteMovies()
         }
     }, [location, user])
