@@ -3,8 +3,11 @@ import { Link, useNavigate } from 'react-router-dom'
 import { assets } from '../assets/assets.js'
 import { MenuIcon, SearchIcon, TicketPlus, User, XIcon } from 'lucide-react'
 import { useClerk, UserButton, useUser } from "@clerk/clerk-react"
+import { useAppContext } from '../context/AppContext.jsx'
 
 const Navbar = () => {
+
+    const { favoriteMovies } = useAppContext()
 
     const [isOpen, isSetOpen] = useState(false)
     const { user } = useUser()
@@ -25,7 +28,7 @@ const Navbar = () => {
                 <Link className='border border-primary-dull rounded-full px-3 py-1 w-26 text-center' onClick={() => { isSetOpen(false); scrollTo(0, 0) }} to="/movies">Movies</Link>
                 <Link className='border border-primary-dull rounded-full px-3 py-1 w-26 text-center' onClick={() => { isSetOpen(false); scrollTo(0, 0) }} to="/">Theaters</Link>
                 <Link className='border border-primary-dull rounded-full px-3 py-1 w-26 text-center' onClick={() => { isSetOpen(false); scrollTo(0, 0) }} to="/">Releases</Link>
-                <Link className='border border-primary-dull rounded-full px-3 py-1 w-26 text-center' onClick={() => { isSetOpen(false); scrollTo(0, 0) }} to="/favorite">Favorites</Link>
+                { favoriteMovies.length > 0 && <Link className='border border-primary-dull rounded-full px-3 py-1 w-26 text-center' onClick={() => { isSetOpen(false); scrollTo(0, 0) }} to="/favorite">Favorites</Link>}
             </div>
 
             <div className='flex items-center gap-8'>
