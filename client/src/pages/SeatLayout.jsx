@@ -93,6 +93,7 @@ const SeatLayout = () => {
 
             if(data.success){
                 window.location.href = data.url
+                toast.loading("Redirecting to Stripe Checkout...");
             }
             else{
                 toast.error(data.message)

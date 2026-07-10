@@ -1,6 +1,7 @@
 import React from 'react'
 import { useEffect } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
+import { toast } from 'react-toastify'
 
 const Loading = () => {
 
@@ -11,7 +12,8 @@ const Loading = () => {
         if(nextUrl){
             setTimeout(()=>{
                 navigate("/"+nextUrl)
-            }, 8000)
+                toast.success("Congratulations. Seat are booked Successfully")
+            }, 6000)
         }
     }, [])
 
