@@ -1,3 +1,4 @@
+import { inngest } from "../inngest/index.js";
 import Booking from "../models/Booking.js";
 import Show from "../models/Show.js"
 
@@ -89,17 +90,24 @@ export const createBooking = async (req, res) => {
             metadata: {
                 bookingId: booking._id.toString()
             },
-            expires_at: Math.floor(Date.now()/1000) + 10*60, // expires in 30 minutes but how
+            expires_at: Math.floor(Date.now()/1000) + 30*60, // expires in 30 minutes but how
         })
 
         booking.paymentLink = session.url
         await booking.save()
 
+        await inngest.send({
+            name: "app/checkpayment",
+            data : {
+                bookingId: booking._id.toString()
+            }
+        }) 
+
         res.json({success: true, url : session.url})
 
     }
     catch (error) {
-        console.log("Error occured during creation of booking data and reserving the seats in the show database.")
+        console.log("Error occured during creation of booking data and reserving the seats in the show database. Error: ",error)
         res.json({success: false, message:error.message})
     }
 }
