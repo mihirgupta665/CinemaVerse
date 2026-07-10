@@ -2,7 +2,9 @@ import stripe from "stripe";
 import Booking from "../models/Booking.js";
 
 export const stripeWebhooks = async (request, response) => {
-    
+
+    console.log("Webhook received");
+
     const stripeInstance = new stripe(process.env.STRIPE_SECRET_KEY)
     const sig = request.headers["stripe-signature"]
 
@@ -27,7 +29,8 @@ export const stripeWebhooks = async (request, response) => {
                 })
 
                 const session = sessionList.data[0];
-                const {bookingId} = sessions.metadata;
+                const {bookingId} = session.metadata;
+                // console.log("Booking Id : ",bookingId)
 
                 await Booking.findByIdAndUpdate(bookingId, {isPaid: true, paymentLink: ""})
 

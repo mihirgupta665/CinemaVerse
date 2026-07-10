@@ -80,6 +80,8 @@ export const createBooking = async (req, res) => {
             quantity: 1
         }]
 
+        console.log("Sesion is goind to be created")
+        
         // what is origin what is /loading/mybooking why in cancel we did not used loading as direct /my-booking
         const session = await stripeInstance.checkout.sessions.create({
             success_url: `${origin}/loading/my-bookings`,
@@ -91,6 +93,8 @@ export const createBooking = async (req, res) => {
             },
             expires_at: Math.floor(Date.now()/1000) + 30*60, // expires in 30 minutes but how
         })
+        
+        console.log("Sesion is have been created")
 
         booking.paymentLink = session.url
         await booking.save()
