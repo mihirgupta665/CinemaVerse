@@ -75,7 +75,7 @@ export const createBooking = async (req, res) => {
                 product_data: {
                     name: showData.movie.title
                 },
-                unit_amount: Math.floor(booking.amount) * 100
+                unit_amount: Math.floor(booking.amount)
             },
             quantity: 1
         }]
