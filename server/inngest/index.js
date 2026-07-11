@@ -331,6 +331,8 @@ const sendShowReminders = inngest.createFunction(
 
                         if (!booking.user) continue;
 
+                        console.log(JSON.stringify(show.movie.genres, null, 2));
+
                         tasks.push({
 
                             userName: booking.user.name,
@@ -374,7 +376,6 @@ const sendShowReminders = inngest.createFunction(
                 message: "No reminder emails to send.",
             };
 
-        }
 
         // ===================================================
         // Send Reminder Emails
