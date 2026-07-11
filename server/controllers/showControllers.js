@@ -1,6 +1,7 @@
 import axios from "axios"
 import Movie from "../models/Movie.js";
 import Show from "../models/Show.js";
+import { inngest } from "../inngest/index.js";
 
 const getTmdbRequestConfig = () => {
     const tmdbCredential = process.env.TMDB_API_KEY;
@@ -148,7 +149,30 @@ export const addShows = async (req, res) => {
             }
 
             const moviedoc = await Movie.create(movieDetails); 
+            movie = moviedoc;
             // console.log(movieDetails);
+
+            // Trigger the Inngest send email functionality to send the email for the newly created movie
+            try {
+
+                await inngest.send({
+                    name: "app/show.added",
+                    data: {
+                        movieTitle: moviedoc.title,
+                        movieId: moviedoc._id
+                    }
+                });
+
+            }
+            catch (err) {
+
+                console.error(
+                    "Failed to queue movie notification",
+                    err
+                );
+
+            }
+
         }
 
         // showInput is array of object of date
@@ -160,7 +184,7 @@ export const addShows = async (req, res) => {
             show.time.forEach((time) => {
                 const dateTimeString = `${showDate}T${time}`;
                 showsToCreate.push({
-                    movie: movieId,
+                    movie: movie._id,
                     showDateTime: new Date(dateTimeString),
                     showPrice,
                     occupiedSeats: {}

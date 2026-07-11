@@ -476,7 +476,7 @@ const sendShowReminders = inngest.createFunction(
                                                                                                             <table role="presentation" align="center" cellspacing="0" cellpadding="0" style="margin:34px auto;">
                                                                                                                 <tr>
                                                                                                                     <td bgcolor="#F84565" style="border-radius:8px;">
-                                                                                                                        <a href="${process.env.CLIENT_URL}/my-bookings"
+                                                                                                                        <a href="#"
                                                                                                                             style="display:inline-block;padding:16px 34px;color:#fff;font:bold 16px Arial,sans-serif;text-decoration:none;">
                                                                                                                             🍿 Open My Ticket
                                                                                                                         </a>
@@ -538,39 +538,244 @@ const sendShowReminders = inngest.createFunction(
 );
 
 
-const sendNewShowNotification = inngest.createFunction(
-    {id : "send-new-show-notification"},
-    { event: "app/show.added"},
+// ==========================================================
+// Inngest Function : Notify All Users About New Movie
+// ==========================================================
+
+const sendNewShowNotifications = inngest.createFunction(
+
+    {
+        id: "send-new-show-notifications",
+    },
+
+    {
+        event: "app/show.added",
+    },
+
     async ({ event }) => {
 
         const { movieTitle, movieId } = event.data;
 
-        const users = await User.find({})
+        // Fetch Movie Details
+        const movie = await Movie.findById(movieId);
 
-        for(const user of Users){
+        if (!movie) {
 
-            const userEmail = user.email;
-            const userName = user.name;
-
-            const subject = `🎬 New Show Added: ${movieTitle}`;
-            const body = "";
-            
-            await sendEmail({
-                to: userEmail,
-                subject,
-                body
-            })
+            return {
+                success: false,
+                message: "Movie not found."
+            };
 
         }
 
-        return {message: `Movie ${movieTitle} Notification sent.`}
+        // Fetch All Registered Users
 
-        
+        const users = await User.find({})
+            .select("name email");
+
+        if (users.length === 0) {
+
+            return {
+                success: true,
+                totalUsers: 0,
+                message: "No registered users found."
+            };
+
+        }
+
+        // Send Emails
+
+        const results = await Promise.allSettled(
+
+            users.map((user) => {
+
+                const emailData = {
+
+                    // User
+                    userName: user.name,
+                    userEmail: user.email,
+
+                    // Movie
+                    movieTitle: movie.title,
+
+                    moviePoster:
+                        `https://image.tmdb.org/t/p/w342${movie.poster_path}`,
+
+                    movieBackdrop:
+                        `https://image.tmdb.org/t/p/w1280${movie.backdrop_path}`,
+
+                    tagline: movie.tagline,
+
+                    overview: movie.overview,
+
+                    runtime: movie.runtime,
+
+                    genres: movie.genres,
+
+                    rating: movie.vote_average,
+
+                    releaseDate: movie.release_date,
+
+                    movieId
+
+                };
+
+                return sendEmail({
+
+                    to: emailData.userEmail,
+
+                    subject: `🎬 A New Movie Has Arrived on CinemaVerse | ${emailData.movieTitle} is now Available for Booking`,
+
+                    body: `
+                    <div style="margin:0;padding:24px;background:#eceff3;">
+                        <table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="border-collapse:collapse;">
+                            <tr>
+                                <td align="center">
+
+                                    <table role="presentation" width="680" cellspacing="0" cellpadding="0" style="width:100%;max-width:680px;background:#18181b;border-radius:18px;overflow:hidden;border:1px solid #2d2d2d;">
+
+                                        <tr>
+                                            <td>
+                                                <img src="${emailData.movieBackdrop}" alt="${emailData.movieTitle}" width="680"
+                                                    style="display:block;width:100%;max-width:680px;height:auto;border:0;">
+                                            </td>
+                                        </tr>
+
+                                        <tr>
+                                            <td align="center" style="background:#F84565;padding:24px;">
+                                                <div style="font:700 34px Arial,sans-serif;color:#fff;">🎬 CinemaVerse</div>
+                                                <div style="font:16px Arial,sans-serif;color:#ffe8ee;padding-top:8px;">
+                                                    A New Movie Has Arrived!
+                                                </div>
+                                            </td>
+                                        </tr>
+
+                                        <tr>
+                                            <td style="padding:28px;font-family:Arial,sans-serif;color:#fff;">
+                                                <h2 style="margin:0 0 14px;font-size:28px;">Hi ${emailData.userName}, 👋</h2>
+
+                                                <p style="margin:0 0 26px;color:#d4d4d8;font-size:16px;line-height:1.8;">
+                                                    Lights dim.<br>The screen comes alive.<br><br>We're excited to announce that <b>${emailData.movieTitle}</b> has officially arrived on <b>CinemaVerse</b>. Explore the story, discover show timings and reserve your favourite seats before they're gone!
+                                                    </p>
+
+                                                        <!-- Movie Card -->
+                                                        <table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="background:#232326;border:1px solid #333;border-radius:14px;">
+                                                            <tr>
+                                                                <td align="center" style="padding:22px;">
+                                                                    <img src="${emailData.moviePoster}"
+                                                                        alt="${emailData.movieTitle}"
+                                                                        width="170"
+                                                                        style="display:block;width:170px;max-width:100%;border-radius:10px;">
+                                                                </td>
+                                                            </tr>
+
+                                                            <tr>
+                                                                <td style="padding:0 24px 24px;text-align:center;">
+                                                                    <h2 style="margin:0;color:#fff;font-size:28px;">
+                                                                        ${emailData.movieTitle}
+                                                                    </h2>
+
+                                                                    <p style="margin:12px 0;color:#bfbfbf;font-style:italic;font-size:16px;">
+                                                                        ${emailData.tagline}
+                                                                    </p>
+
+                                                                    <p style="margin:0;color:#ededed;line-height:1.8;font-size:15px;">
+                                                                        ⭐ ${emailData.rating} |
+                                                                        🎭 ${Array.isArray(emailData.genres) ? emailData.genres.join(" • ") : emailData.genres} |
+                                                                        ⏱ ${emailData.runtime} mins
+                                                                    </p>
+                                                                </td>
+                                                            </tr>
+                                                        </table>
+
+
+                                                        <h2 style="margin:34px 0 16px;color:#F84565;font-size:26px;">📝 Story Preview</h2>
+
+                                                        <table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="border-collapse:collapse;">
+                                                            <tr>
+                                                                <td style="padding:18px;border:1px solid #383838;color:#d4d4d8;line-height:1.8;">
+                                                                    ${emailData.overview}
+                                                                </td>
+                                                            </tr>
+                                                        </table>
+
+                                                        <table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="margin-top:28px;">
+                                                            <tr>
+                                                                <td style="background:#2b2023;border-left:5px solid #F84565;padding:18px;color:#f3f4f6;border-radius:10px;font-size:15px;line-height:1.7;">
+                                                                    🍿 <b>Booking is now open.</b><br><br>Reserve your favourite seats early and experience this movie on the big screen with CinemaVerse.
+                                                                    </td>
+                                                                    </tr>
+                                                                </table>
+
+                                                                <table role="presentation" align="center" cellspacing="0" cellpadding="0" style="margin:34px auto;">
+                                                                    <tr>
+                                                                        <td bgcolor="#F84565" style="border-radius:8px;">
+                                                                            <a href="#"
+                                                                                style="display:inline-block;padding:16px 34px;color:#fff;font:bold 16px Arial,sans-serif;text-decoration:none;">
+                                                                                🎬 Explore Movie
+                                                                            </a>
+                                                                        </td>
+                                                                    </tr>
+                                                                </table>
+
+                                                                <p style="color:#d4d4d8;font-size:16px;line-height:1.8;">
+                                                                    See you at the movies! ❤️<br><strong>Team CinemaVerse</strong>
+                                                                </p>
+
+                                                            </td>
+                                                        </tr>
+
+                                                        <tr>
+                                                            <td style="background:#101010;padding:24px;text-align:center;color:#9ca3af;font:13px Arial,sans-serif;">
+                                                                This is an automated email. Please do not reply.<br><br>
+                                                                    © ${new Date().getFullYear()} CinemaVerse. All Rights Reserved.
+                                                                </td>
+                                                                </tr>
+
+                                                            </table>
+
+                                                        </td>
+                                                    </tr>
+                                                    </table>
+                                                </div>`
+                });
+
+            })
+
+        );
+
+        // Summary
+
+        const sent = results.filter(
+            result => result.status === "fulfilled"
+        ).length;
+
+        const failed = results.filter(
+            result => result.status === "rejected"
+        ).length;
+
+        return {
+
+            success: true,
+
+            movie: movieTitle,
+
+            totalUsers: users.length,
+
+            sent,
+
+            failed,
+
+            message:
+                `Successfully notified ${sent} users about "${movieTitle}". ${failed} email(s) failed.`
+
+        };
 
     }
-)
+
+);
 
 
 
 
-export const functions = [syncUserCreation, syncUserDeletion, syncUserUpdation, releaseSeatsAndDeleteBooking, sendBookingConfirmationEmail, sendShowReminders, sendNewShowNotification];
+export const functions = [syncUserCreation, syncUserDeletion, syncUserUpdation, releaseSeatsAndDeleteBooking, sendBookingConfirmationEmail, sendShowReminders, sendNewShowNotifications, ];
