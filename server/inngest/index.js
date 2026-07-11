@@ -395,7 +395,115 @@ const sendShowReminders = inngest.createFunction(
                             subject:
                                 `🍿 ${task.movieTitle} begins in approximately 2 hours | CinemaVerse`,
 
-                            
+                            body: `
+                                <div style="margin:0;padding:24px;background:#eceff3;">
+                                    <table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="border-collapse:collapse;">
+                                        <tr><td align="center">
+
+                                            <table role="presentation" width="680" cellspacing="0" cellpadding="0" style="width:100%;max-width:680px;background:#18181b;border-radius:18px;overflow:hidden;border:1px solid #2d2d2d;">
+
+                                                <tr>
+                                                    <td>
+                                                        <img src="${task.movieBackdrop}" alt="${task.movieTitle}" width="680"
+                                                            style="display:block;width:100%;max-width:680px;height:auto;border:0;">
+                                                    </td>
+                                                </tr>
+
+                                                <tr>
+                                                    <td align="center" style="background:#F84565;padding:24px;">
+                                                        <div style="font:700 34px Arial,sans-serif;color:#fff;">🎬 CinemaVerse</div>
+                                                        <div style="font:16px Arial,sans-serif;color:#ffe8ee;padding-top:8px;">
+                                                            🍿 Your movie begins in approximately <b>2 HOURS</b>
+                                                        </div>
+                                                    </td>
+                                                </tr>
+
+                                                <tr>
+                                                    <td style="padding:28px;font-family:Arial,sans-serif;color:#fff;">
+                                                        <h2 style="margin:0 0 14px;font-size:28px;">Hi ${task.userName}, 👋</h2>
+
+                                                        <p style="margin:0 0 26px;color:#d4d4d8;font-size:16px;line-height:1.8;">
+                                                            The countdown has begun! Your CinemaVerse experience is almost here.
+                                                            Please arrive <b>15–20 minutes early</b> so you can check in, grab your popcorn, and enjoy the trailers before the movie begins.
+                                                        </p>
+
+                                                        <table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="background:#232326;border:1px solid #333;border-radius:14px;">
+                                                            <tr>
+                                                                <td align="center" style="padding:22px;">
+                                                                    <img src="${task.moviePoster}" width="170" style="display:block;width:170px;max-width:100%;border-radius:10px;">
+                                                                </td>
+                                                            </tr>
+
+                                                            <tr>    
+                                                                <td style="padding:0 24px 24px;text-align:center;">
+                                                                    <h2 style="margin:0;color:#fff;font-size:28px;">${task.movieTitle}</h2>
+                                                                    <p style="margin:12px 0;color:#ededed;line-height:1.8;font-size:15px;">
+                                                                        ⭐ Runtime: ${task.runtime} mins<br>
+                                                                            🎭 ${Array.isArray(task.genres) ? task.genres.join(" • ") : task.genres}
+                                                                    </p>
+                                                                </td>
+                                                            </tr>
+                                                        </table>
+
+                                                        <h2 style="margin:34px 0 16px;color:#F84565;font-size:26px;">⏰ Reminder Details</h2>
+
+                                                        <table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="border-collapse:collapse;">
+                                                            <tr>
+                                                                <td width="50%" style="padding:16px;border:1px solid #383838;color:#fff;"><b>📅 Date</b><br><br>${new Date(task.showTime).toLocaleDateString("en-IN", { timeZone: "Asia/Kolkata" })}</td>
+                                                                    <td width="50%" style="padding:16px;border:1px solid #383838;color:#fff;"><b>🕒 Time</b><br><br>${new Date(task.showTime).toLocaleTimeString("en-IN", { hour: "2-digit", minute: "2-digit", timeZone: "Asia/Kolkata" })}</td>
+                                                                    </tr>
+                                                                        <tr>
+                                                                            <td style="padding:16px;border:1px solid #383838;color:#fff;"><b>💺 Seats</b><br><br>${task.bookedSeats.join(", ")}</td>
+                                                                                <td style="padding:16px;border:1px solid #383838;color:#fff;"><b>💰 Amount Paid</b><br><br>₹${task.amount}</td>
+                                                                                </tr>
+                                                                                    <tr>
+                                                                                        <td style="padding:16px;border:1px solid #383838;color:#fff;"><b>📍 Theatre</b><br><br>${task.theatre}</td>
+                                                                                            <td style="padding:16px;border:1px solid #383838;color:#fff;"><b>🎞 Screen</b><br><br>${task.screen}</td>
+                                                                                            </tr>
+                                                                                                <tr>
+                                                                                                    <td colspan="2" style="padding:16px;border:1px solid #383838;color:#fff;"><b>🎟 Booking ID</b><br><br>${task.bookingId}</td>
+                                                                                                    </tr>
+                                                                                                    </table>
+
+                                                                                                    <table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="margin-top:28px;">
+                                                                                                        <tr>
+                                                                                                            <td style="background:#2b2023;border-left:5px solid #F84565;padding:18px;color:#f3f4f6;border-radius:10px;font-size:15px;line-height:1.7;">
+                                                                                                                ⏰ <b>Your movie begins in approximately 2 HOURS.</b><br><br>
+                                                                                                                    🍿 Lights dim. The story begins soon.
+                                                                                                                </td>
+                                                                                                                </tr>
+                                                                                                            </table>
+
+                                                                                                            <table role="presentation" align="center" cellspacing="0" cellpadding="0" style="margin:34px auto;">
+                                                                                                                <tr>
+                                                                                                                    <td bgcolor="#F84565" style="border-radius:8px;">
+                                                                                                                        <a href="${process.env.CLIENT_URL}/my-bookings"
+                                                                                                                            style="display:inline-block;padding:16px 34px;color:#fff;font:bold 16px Arial,sans-serif;text-decoration:none;">
+                                                                                                                            🍿 Open My Ticket
+                                                                                                                        </a>
+                                                                                                                    </td>
+                                                                                                                </tr>
+                                                                                                            </table>
+
+                                                                                                            <p style="color:#d4d4d8;font-size:16px;line-height:1.8;">
+                                                                                                                See you at the movies! ❤️<br><strong>Team CinemaVerse</strong>
+                                                                                                            </p>
+
+                                                                                                        </td></tr>
+
+                                                                                                <tr>
+                                                                                                    <td style="background:#101010;padding:24px;text-align:center;color:#9ca3af;font:13px Arial,sans-serif;">
+                                                                                                        This is an automated reminder email. Please do not reply.<br><br>
+                                                                                                            © ${new Date().getFullYear()} CinemaVerse. All Rights Reserved.
+                                                                                                        </td>
+                                                                                                        </tr>
+
+                                                                                                    </table>
+
+                                                                                            </td></tr>
+                                                                                        </table>
+                                                                                    </div>
+`
 
 
                         }))
