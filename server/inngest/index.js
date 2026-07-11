@@ -265,7 +265,173 @@ const sendBookingConfirmationEmail = inngest.createFunction(
 )
 
 
+// Inngest Function to send reminder emails
+const sendShowReminders = inngest.createFunction(
+    {
+        id: "send-show-reminders",
+    },
+
+    // Runs every 10 minutes
+    {
+        cron: "*/10 * * * *",
+    },
+
+    async ({ step }) => {
+
+        // ===================================================
+        // Calculate Reminder Window (2 Hours Before Show)
+        // ===================================================
+
+        const now = new Date();
+
+        const in2Hours = new Date(
+            now.getTime() + 2 * 60 * 60 * 1000
+        );
+
+        const windowStart = new Date(
+            in2Hours.getTime() - 10 * 60 * 1000
+        );
+
+        // ===================================================
+        // Prepare Reminder Tasks
+        // ===================================================
+
+        const reminderTasks = await step.run(
+            "prepare-reminder-tasks",
+            async () => {
+
+                const shows = await Show.find({
+                    showDateTime: {
+                        $gte: windowStart,
+                        $lte: in2Hours,
+                    },
+                }).populate({
+                    path: "movie",
+                    select:
+                        "title poster_path backdrop_path runtime genres",
+                });
+
+                const tasks = [];
+
+                for (const show of shows) {
+
+                    if (!show.movie) continue;
+
+                    // Get all paid bookings for this show
+                    const bookings = await Booking.find({
+                        show: show._id,
+                        isPaid: true,
+                    }).populate({
+                        path: "user",
+                        select: "name email",
+                    });
+
+                    for (const booking of bookings) {
+
+                        if (!booking.user) continue;
+
+                        tasks.push({
+
+                            // User
+                            userName: booking.user.name,
+                            userEmail: booking.user.email,
+
+                            // Movie
+                            movieTitle: show.movie.title,
+                            moviePoster: show.movie.poster_path,
+                            movieBackdrop: show.movie.backdrop_path,
+                            runtime: show.movie.runtime,
+                            genres: show.movie.genres,
+
+                            // Show
+                            showTime: show.showDateTime,
+
+                            // Booking
+                            bookingId: booking._id.toString(),
+                            bookedSeats: booking.bookedSeats,
+                            amount: booking.amount,
+
+                            // Theatre Information
+                            theatre: "CinemaVerse Multiplex",
+                            screen: "Screen 1",
+                        });
+                    }
+                }
+
+                return tasks;
+            }
+        );
+
+        // ===================================================
+        // Nothing To Send
+        // ===================================================
+
+        if (reminderTasks.length === 0) {
+
+            return {
+                success: true,
+                sent: 0,
+                message: "No reminder emails to send.",
+            };
+
+        }
+
+        // ===================================================
+        // Send Reminder Emails
+        // ===================================================
+
+        const results = await step.run(
+            "send-reminder-emails",
+            async () => {
+
+                return Promise.allSettled(
+
+                    reminderTasks.map((task) =>
+
+                        sendEmail({
+
+                            to: task.userEmail,
+
+                            subject:
+                                `🍿 ${task.movieTitle} begins in approximately 2 hours | CinemaVerse`,
+
+                            
+
+
+                        }))
+
+                );
+
+            });
+
+        // ===================================================
+        // Summary
+        // ===================================================
+
+        const successful = results.filter((result) => result.status === "fulfilled").length;
+
+        const failed = results.filter((result) => result.status === "rejected").length;
+
+        return {
+
+            success: true,
+
+            total: reminderTasks.length,
+
+            sent: successful,
+
+            failed,
+
+            message:
+                `Successfully sent ${successful} reminder email(s). ${failed} failed.`,
+
+        };
+
+    }
+);
 
 
 
-export const functions = [syncUserCreation, syncUserDeletion, syncUserUpdation, releaseSeatsAndDeleteBooking, sendBookingConfirmationEmail];
+
+
+export const functions = [syncUserCreation, syncUserDeletion, syncUserUpdation, releaseSeatsAndDeleteBooking, sendBookingConfirmationEmail, sendShowReminders];
