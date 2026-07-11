@@ -83,3 +83,118 @@ input::-webkit-inner-spin-button {
 ::-webkit-calendar-picker-indicator {
     filter: invert(1);
 }
+
+.seat-map {
+    width: max-content;
+    min-width: 100%;
+    display: grid;
+    gap: 1.25rem;
+}
+
+.seat-map-groups {
+    display: grid;
+    grid-template-columns: repeat(2, max-content);
+    gap: 1rem 2.2rem;
+    justify-content: center;
+}
+
+.seat-map-top {
+    display: flex;
+    justify-content: center;
+}
+
+.seat-section {
+    padding: 0.8rem 0.85rem;
+    border: 1px solid rgba(248, 69, 101, 0.12);
+    border-radius: 1rem;
+    background: linear-gradient(180deg, rgba(255, 255, 255, 0.025), rgba(248, 69, 101, 0.03));
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.03);
+}
+
+.seat-section-featured {
+    padding-inline: 1rem;
+}
+
+.seat-map-block {
+    display: grid;
+    gap: 0.6rem;
+    justify-items: start;
+}
+
+.seat-row-grid {
+    grid-template-columns: repeat(9, minmax(0, 1fr));
+    gap: 0.45rem;
+}
+
+.seat-button {
+    width: clamp(1.8rem, 3vw, 2.05rem);
+    height: clamp(1.8rem, 3vw, 2.05rem);
+    font-size: 0.68rem;
+    line-height: 1;
+}
+
+.legend-dot {
+    width: 0.9rem;
+    height: 0.9rem;
+    border-radius: 0.25rem;
+    display: inline-block;
+    flex-shrink: 0;
+}
+
+.seat-board-scroll {
+    scroll-behavior: smooth;
+}
+
+.seat-board-scroll.custom-scrollbar::-webkit-scrollbar {
+    height: 10px;
+}
+
+.seat-board-scroll.custom-scrollbar::-webkit-scrollbar-track {
+    background: rgba(255, 255, 255, 0.06);
+    border-radius: 999px;
+}
+
+.seat-board-scroll.custom-scrollbar::-webkit-scrollbar-thumb {
+    background: linear-gradient(90deg, #f84565, #c91111);
+    border: 2px solid rgba(15, 15, 16, 0.55);
+}
+
+.seat-board-scroll {
+    scrollbar-width: thin;
+    scrollbar-color: #d63854 rgba(255, 255, 255, 0.08);
+}
+
+@media (min-width: 768px) {
+    .seat-map {
+        width: 100%;
+    }
+}
+
+@media (max-width: 640px) {
+    .seat-map {
+        gap: 1rem;
+    }
+
+    .seat-map-groups {
+        gap: 0.9rem 1rem;
+    }
+
+    .seat-map-block {
+        gap: 0.5rem;
+    }
+
+    .seat-row-grid {
+        gap: 0.35rem;
+    }
+
+    .seat-section {
+        padding: 0.8rem 0.7rem;
+        border-radius: 0.85rem;
+    }
+
+    .seat-button {
+        width: 1.8rem;
+        height: 1.8rem;
+        font-size: 0.64rem;
+    }
+}

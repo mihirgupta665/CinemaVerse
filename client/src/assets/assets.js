@@ -5,6 +5,7 @@ import appStore from './appStore.svg'
 import screenImage from './screenImage.svg'
 import profile from './profile.png'
 import footerVideo from "./footerVideo.mp4";
+import notFoundSpace from "./notFoundSpace.png";
 
 export const assets = {
     logo,
@@ -14,6 +15,7 @@ export const assets = {
     screenImage,
     profile,
     footerVideo,
+    notFoundSpace,
 }
 
 export const dummyTrailers = [

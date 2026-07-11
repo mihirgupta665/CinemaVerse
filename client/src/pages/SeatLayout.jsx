@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import { useParams } from 'react-router-dom'
 import { assets } from '../assets/assets'
 import Loading from '../components/Loading'
@@ -20,8 +20,15 @@ const SeatLayout = () => {
     const [occupiedSeats, setOccupiedSeats] = useState([])
     const [isLoading, setIsLoading] = useState(true)
     const [isUnavailable, setIsUnavailable] = useState(false)
+    const seatBoardRef = useRef(null)
 
-    const groupRows = [["A", "B"], ["C", "D"], ["E", "F"], ["G", "H"], ["I", "J"]]
+    const seatSections = [
+        ["A", "B"],
+        ["C", "D"],
+        ["E", "F"],
+        ["G", "H"],
+        ["I", "J"],
+    ]
 
     const getShow = async () => {
 
@@ -129,17 +136,35 @@ const SeatLayout = () => {
         }
     }, [user, id, date, selectedTime])
 
+    useEffect(() => {
+        const seatBoard = seatBoardRef.current
+        if (!seatBoard) return
+
+        const centerSeatBoard = () => {
+            if (window.innerWidth >= 640) return
+
+            const maxScrollLeft = seatBoard.scrollWidth - seatBoard.clientWidth
+            seatBoard.scrollLeft = maxScrollLeft > 0 ? maxScrollLeft / 2 : 0
+        }
+
+        centerSeatBoard()
+        window.addEventListener("resize", centerSeatBoard)
+
+        return () => window.removeEventListener("resize", centerSeatBoard)
+    }, [selectedTime, isLoading, date, id])
+
     const availableTimes = show?.dateTime?.[date] || []
 
     const renderSeats = (row, count = 9) => (
-        <div key={row} className="flex gap-2 mt-2">
-            <div className="flex flex-wrap items-center justify-center gap-2">
+        <div key={row} className="flex items-center gap-3">
+            <span className="w-4 text-xs font-semibold text-primary/80">{row}</span>
+            <div className="grid grid-cols-9 gap-2 seat-row-grid">
                 {Array.from({ length: count }, (_, i) => {
                     const seatId = `${row}${i + 1}`;
                     return (
                         <button key={seatId} onClick={() =>
                             handleSeatClick(seatId)}
-                            className={`h-8 w-8 aspect-square rounded border border-primary/60 cursor-pointer 
+                            className={`seat-button rounded-md border border-primary/60 cursor-pointer text-[11px] font-medium shrink-0
                             ${selectedSeats.includes(seatId) && "bg-primary text-white"}
                             ${occupiedSeats.includes(seatId) && "opacity-50"}
                             `}>
@@ -147,6 +172,14 @@ const SeatLayout = () => {
                         </button>
                     );
                 })}
+            </div>
+        </div>
+    )
+
+    const renderSection = (rows, className = "") => (
+        <div className={`seat-section ${className}`}>
+            <div className='seat-map-block'>
+                {rows.map((row) => renderSeats(row))}
             </div>
         </div>
     )
@@ -171,7 +204,7 @@ const SeatLayout = () => {
     }
 
     return (
-        <div className='flex flex-col md:flex-row px-6 md:px-16 lg:px-40 py-30 md:pt-50'>
+        <div className='flex flex-col md:flex-row px-4 sm:px-6 md:px-16 lg:px-40 py-30 md:pt-50'>
             <div className="w-60 bg-primary/10 border border-primary/20 rounded-lg py-10 h-max md:sticky md:top-32">
                 <p className='text-lg font-semibold px-6'>Available Timings</p>
                 <div className='mt-5 flex flex-col gap-2 space-y-1'>
@@ -190,23 +223,46 @@ const SeatLayout = () => {
                 <BlurCircle bottom="0" right='0' />
 
                 <h1 className='text-2xl font-semibold mb-4'>Select Your Seat</h1>
-                <img src={assets.screenImage} alt="Screen" />
+                <img src={assets.screenImage} alt="Screen" className='w-full max-w-[760px]' />
                 <p className='text-gray-100 text-sm mb-6'>SCREEN SIDE</p>
 
-                <div className='flex flex-col items-center mt-10 text-sm text-gray-300'>
-
-                    <div className='grid grid-cols-2 md:grid-cols-1 gap-8 md:gap-2 mb-6'>
-                        {groupRows[0].map(row => renderSeats(row))}
+                <div className='w-full max-w-[920px]'>
+                    <div className='flex flex-wrap items-center justify-center gap-3 mb-6 text-xs text-gray-300'>
+                        <div className='flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-3 py-1.5'>
+                            <span className='legend-dot border border-primary/60 bg-transparent'></span>
+                            Available
+                        </div>
+                        <div className='flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-3 py-1.5'>
+                            <span className='legend-dot bg-primary'></span>
+                            Selected
+                        </div>
+                        <div className='flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-3 py-1.5'>
+                            <span className='legend-dot border border-primary/40 bg-white/20 opacity-50'></span>
+                            Reserved
+                        </div>
                     </div>
 
-                    <div className='grid grid-cols-2 gap-11'>
-                        {groupRows.slice(1).map((group, idx) => (
-                            <div key={idx}>
-                                {group.map(row => renderSeats(row))}
-                            </div>
-                        ))}
+                    <div className='mb-3 flex justify-center sm:hidden'>
+                        <span className='rounded-full border border-primary/20 bg-primary/8 px-3 py-1 text-[11px] text-primary/90'>
+                            Swipe to view full seat map
+                        </span>
                     </div>
 
+                <div ref={seatBoardRef} className='w-full max-w-[920px] overflow-x-auto custom-scrollbar pb-3 seat-board-scroll'>
+                    <div className='seat-map mx-auto mt-6 text-sm text-gray-300'>
+                        <div className='seat-map-top'>
+                            {renderSection(seatSections[0], "seat-section-featured")}
+                        </div>
+
+                        <div className='seat-map-groups'>
+                            {seatSections.slice(1).map((group, idx) => (
+                                <React.Fragment key={group.join("-")}>
+                                    {renderSection(group, idx % 2 === 0 ? "seat-section-left" : "seat-section-right")}
+                                </React.Fragment>
+                            ))}
+                        </div>
+                    </div>
+                </div>
                 </div>
 
                 <button onClick={bookTickets} className='flex items-center gap-1 mt-20 px-10 py-3 text-sm bg-primary hover:bg-primary-dull transition rounded-full font-medium cursor-pointer active:scale-95'>

@@ -1,6 +1,6 @@
 import React from 'react'
 import Navbar from './components/Navbar'
-import { Route, Routes, useLocation } from 'react-router-dom'
+import { Route, Routes, matchPath, useLocation } from 'react-router-dom'
 import Home from './pages/Home'
 import Movies from './pages/Movies'
 import MovieDetails from './pages/MovieDetails'
@@ -19,19 +19,36 @@ import ListBookings from './pages/admin/ListBookings'
 import { useAppContext } from './context/AppContext'
 import { SignIn } from '@clerk/clerk-react'
 import Loading from './components/Loading'
+import NotFound from "./pages/NotFound";
 
 const App = () => {
 
-    const isAdminRoute = useLocation().pathname.startsWith("/admin")
-    // console.log(isAdminRoute)
+    const location = useLocation();
 
-    const { user } = useAppContext()
+    const isAdminRoute = location.pathname.startsWith("/admin");
+    const knownClientRoutes = [
+        "/",
+        "/login",
+        "/movies",
+        "/movies/:id",
+        "/movies/:id/:date",
+        "/favorite",
+        "/my-bookings",
+        "/loading/:nextUrl",
+    ];
+    const isKnownClientRoute = knownClientRoutes.some((route) =>
+        matchPath({ path: route, end: true }, location.pathname)
+    );
+    const isNotFoundRoute = !isAdminRoute && !isKnownClientRoute;
+
+    const { user } = useAppContext();
 
     return (
-
         <>
             <ToastContainer autoClose={3000} theme="dark" />
-            {!isAdminRoute && <Navbar />}
+
+            {!isAdminRoute && !isNotFoundRoute && <Navbar />}
+
             <Routes>
 
                 <Route path="/" element={<Home />} />
@@ -42,13 +59,19 @@ const App = () => {
                 <Route path="/favorite" element={<Favorite />} />
                 <Route path="/my-bookings" element={<MyBookings />} />
                 <Route path="/loading/:nextUrl" element={<Loading />} />
-                
 
-                <Route path="/admin/*" element={user ? <Layout /> : (
-                    <div className='min-h-screen flex justify-center items-center'>
-                        <SignIn fallbackRedirectUrl={"/admin"} />
-                    </div>
-                )}>
+                <Route
+                    path="/admin/*"
+                    element={
+                        user ? (
+                            <Layout />
+                        ) : (
+                            <div className="min-h-screen flex justify-center items-center">
+                                <SignIn fallbackRedirectUrl="/admin" />
+                            </div>
+                        )
+                    }
+                >
                     <Route index element={<Dashboard />} />
                     <Route path="dashboard" element={<Dashboard />} />
                     <Route path="add-shows" element={<AddShows />} />
@@ -56,12 +79,13 @@ const App = () => {
                     <Route path="list-bookings" element={<ListBookings />} />
                 </Route>
 
+                <Route path="*" element={<NotFound />} />
+
             </Routes>
-            {!isAdminRoute && <Footer />}
+
+            {!isAdminRoute && !isNotFoundRoute && <Footer />}
         </>
+    );
+};
 
-    )
-
-}
-
-export default App
+export default App;
