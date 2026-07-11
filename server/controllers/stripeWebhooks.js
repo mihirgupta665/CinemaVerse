@@ -1,5 +1,6 @@
 import stripe from "stripe";
 import Booking from "../models/Booking.js";
+import { inngest } from "../inngest/index.js";
 
 export const stripeWebhooks = async (request, response) => {
 
@@ -8,7 +9,7 @@ export const stripeWebhooks = async (request, response) => {
 
     let event;
     try {
-        
+
         event = stripeInstance.webhooks.constructEvent(request.body, sig, process.env.STRIPE_WEBHOOK_SECRET)
 
     }
@@ -17,8 +18,8 @@ export const stripeWebhooks = async (request, response) => {
     }
 
     try {
-    
-        switch(event.type) {
+
+        switch (event.type) {
             case "payment_intent.succeeded": {
                 const paymentIntent = event.data.object;
 
@@ -27,10 +28,18 @@ export const stripeWebhooks = async (request, response) => {
                 })
 
                 const session = sessionList.data[0];
-                const {bookingId} = session.metadata;
+                const { bookingId } = session.metadata;
                 // console.log("Booking Id : ",bookingId)
 
-                await Booking.findByIdAndUpdate(bookingId, {isPaid: true, paymentLink: ""})
+                await Booking.findByIdAndUpdate(bookingId, { isPaid: true, paymentLink: "" })
+
+
+                // Sending Confirmation Email
+                await inngest.send({
+                    name: "app/show.booked",
+                    data: {bookingId}
+                })
+            
 
                 break;
             }
@@ -40,10 +49,10 @@ export const stripeWebhooks = async (request, response) => {
 
         }
 
-        response.json({received: true})
+        response.json({ received: true })
     }
     catch (error) {
-        console.log("Error occured for WebHook Processing. Error : ",error);
+        console.log("Error occured for WebHook Processing. Error : ", error);
         response.status(500).send("Internal Server Error");
     }
 

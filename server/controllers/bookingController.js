@@ -9,9 +9,9 @@ import stripe from "stripe"
 const checkSeatAvailability = async (showId, selectedSeats) => {
 
     try {
-        
+
         const showData = await Show.findById(showId)
-        if(!showData){
+        if (!showData) {
             return false
         }
 
@@ -20,7 +20,7 @@ const checkSeatAvailability = async (showId, selectedSeats) => {
         const isAnySeatTaken = selectedSeats.some(seat => occupiedSeats[seat]);
 
         return !isAnySeatTaken
- 
+
     }
     catch (error) {
         console.log("Error occured during finding the show and checking the selected seat is in the occupied seat list in database. Error : ", error);
@@ -33,16 +33,16 @@ const checkSeatAvailability = async (showId, selectedSeats) => {
 export const createBooking = async (req, res) => {
 
     try {
-        
-        const {userId} = req.auth();
-        const {showId, selectedSeats} = req.body
-        const { origin } = req.headers; 
+
+        const { userId } = req.auth();
+        const { showId, selectedSeats } = req.body
+        const { origin } = req.headers;
 
         // Checign seat availability for the selected show and selected seats
         const isAvailable = await checkSeatAvailability(showId, selectedSeats)
 
-        if(!isAvailable){
-            return res.json({success:false, message: "Selected seats are not available."})
+        if (!isAvailable) {
+            return res.json({ success: false, message: "Selected seats are not available." })
         }
 
         // Get the show details
@@ -81,7 +81,7 @@ export const createBooking = async (req, res) => {
             quantity: 1
         }]
 
-        
+
         const session = await stripeInstance.checkout.sessions.create({
             success_url: `${origin}/loading/my-bookings`,
             cancel_url: `${origin}/my-bookings`,
@@ -90,7 +90,7 @@ export const createBooking = async (req, res) => {
             metadata: {
                 bookingId: booking._id.toString()
             },
-            expires_at: Math.floor(Date.now()/1000) + 30*60, 
+            expires_at: Math.floor(Date.now() / 1000) + 30 * 60,
         })
 
         booking.paymentLink = session.url
@@ -98,17 +98,17 @@ export const createBooking = async (req, res) => {
 
         await inngest.send({
             name: "app/checkpayment",
-            data : {
+            data: {
                 bookingId: booking._id.toString()
             }
-        }) 
+        })
 
-        res.json({success: true, url : session.url})
+        res.json({ success: true, url: session.url })
 
     }
     catch (error) {
-        console.log("Error occured during creation of booking data and reserving the seats in the show database. Error: ",error)
-        res.json({success: false, message:error.message})
+        console.log("Error occured during creation of booking data and reserving the seats in the show database. Error: ", error)
+        res.json({ success: false, message: error.message })
     }
 }
 
@@ -118,17 +118,17 @@ export const getOccupiedSeats = async (req, res) => {
 
     try {
 
-        const {showId} = req.params;
+        const { showId } = req.params;
         const showData = await Show.findById(showId)
 
         const occupiedSeats = Object.keys(showData.occupiedSeats)  // returns array of string for seats
 
-        res.json({success:true, occupiedSeats})
+        res.json({ success: true, occupiedSeats })
 
     }
     catch (error) {
-        console.log("Error occured during fetching the occupied seat for the specified show. Error : ",error)
-        res.json({success:false, message:error.message})
+        console.log("Error occured during fetching the occupied seat for the specified show. Error : ", error)
+        res.json({ success: false, message: error.message })
     }
 
 }
