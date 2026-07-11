@@ -104,7 +104,7 @@ const sendBookingConfirmationEmail = inngest.createFunction(
     { event: "app/show.booked" },
     async ({ event, step }) => {
         const { bookingId } = event.data;
-        
+
         const booking = await Booking.findById(bookingId).populate("user").populate({
             path: "show",
             populate: {
@@ -129,122 +129,142 @@ const sendBookingConfirmationEmail = inngest.createFunction(
             to: booking.user.email,
             subject: `Payment Confirmation for "${booking.show.movie.title}", Congratulations Ticket Booked Successfully!`,
             body: `
-<div style="margin:0;padding:40px 20px;background:#eef2f7;font-family:Arial,Helvetica,sans-serif;">
-  <div style="max-width:680px;margin:0 auto;background:#ffffff;border-radius:20px;overflow:hidden;box-shadow:0 12px 35px rgba(0,0,0,.12);">
+< !--CinemaVerse Production Email -- >
+            <div style="margin:0;padding:24px;background:#eceff3;">
+                <table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="border-collapse:collapse;">
+                    <tr>
+                        <td align="center">
 
-    <!-- Hero Image -->
-    <img src="${heroImage}"
-         alt="${booking.show.movie.title}"
-         style="width:100%;height:340px;object-fit:cover;display:block;"/>
+                            <table role="presentation" width="680" cellspacing="0" cellpadding="0" style="width:100%;max-width:680px;background:#18181b;border-radius:18px;overflow:hidden;border:1px solid #2d2d2d;">
 
-    <!-- Brand -->
-    <div style="background:#F84565;padding:28px;text-align:center;color:#fff;">
-      <div style="font-size:34px;font-weight:bold;">🎬 CinemaVerse</div>
-      <div style="margin-top:10px;font-size:17px;">
-        Booking Confirmed Successfully
-      </div>
-    </div>
+                                <tr>
+                                    <td>
+                                        <img src="${heroImage}" alt="${booking.show.movie.title}" width="680"
+                                            style="display:block;width:100%;max-width:680px;height:auto;border:0;">
+                                    </td>
+                                </tr>
 
-    <div style="padding:35px;">
+                                <tr>
+                                    <td align="center" style="background:#F84565;padding:24px;">
+                                        <div style="font:700 34px Arial,sans-serif;color:#fff;">🎬 CinemaVerse</div>
+                                        <div style="font:16px Arial,sans-serif;color:#ffe8ee;padding-top:8px;">
+                                            Your booking is confirmed
+                                        </div>
+                                    </td>
+                                </tr>
 
-      <h2 style="margin:0;color:#222;">
-        Hi ${booking.user.name}, 👋
-      </h2>
+                                <tr>
+                                    <td style="padding:28px;font-family:Arial,sans-serif;color:#fff;">
+                                        <h2 style="margin:0 0 14px;font-size:28px;">Hi ${booking.user.name}, 👋</h2>
 
-      <p style="color:#555;font-size:16px;line-height:1.8;margin-top:15px;">
-        Your booking has been confirmed and your seats are now reserved.
-        Thank you for choosing <strong>CinemaVerse</strong>. We hope you have an amazing movie experience!
-      </p>
+                                        <p style="margin:0 0 26px;color:#d4d4d8;font-size:16px;line-height:1.8;">
+                                            Thanks for booking with <b>CinemaVerse</b>. Your tickets are confirmed and ready!
+                                        </p>
 
-      <!-- Movie Card -->
-      <table width="100%" cellspacing="0" cellpadding="0" style="margin:30px 0;border:1px solid #ececec;border-radius:14px;background:#fafafa;">
-        <tr>
-          <td width="150" style="padding:20px;">
-            <img src="https://image.tmdb.org/t/p/w342${booking.show.movie.poster_path}"
-                 alt="${booking.show.movie.title}"
-                 style="width:120px;border-radius:10px;display:block;">
-          </td>
+                                        <!-- Movie Card -->
+                                        <table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="background:#232326;border:1px solid #333;border-radius:14px;">
+                                            <tr>
+                                                <td align="center" style="padding:22px;">
+                                                    <img src="https://image.tmdb.org/t/p/w342${booking.show.movie.poster_path}"
+                                                        alt="${booking.show.movie.title}"
+                                                        width="170"
+                                                        style="display:block;width:170px;max-width:100%;border-radius:10px;">
+                                                </td>
+                                            </tr>
 
-          <td style="padding:20px;vertical-align:top;">
-            <h2 style="margin:0;color:#222;">
-              ${booking.show.movie.title}
-            </h2>
+                                            <tr>
+                                                <td style="padding:0 24px 24px;text-align:center;">
+                                                    <h2 style="margin:0;color:#fff;font-size:28px;">
+                                                        ${booking.show.movie.title}
+                                                    </h2>
 
-            <p style="margin:10px 0;color:#666;font-style:italic;">
-              ${booking.show.movie.tagline || ""}
-            </p>
+                                                    <p style="margin:12px 0;color:#bfbfbf;font-style:italic;font-size:16px;">
+                                                        ${booking.show.movie.tagline || ""}
+                                                    </p>
 
-            <p style="margin:0;color:#555;font-size:15px;">
-              ⭐ <strong>${booking.show.movie.vote_average?.toFixed(1) || "N/A"}</strong>
-              &nbsp; • &nbsp;
-              🎭 ${(booking.show.movie.genres || []).map(g => g.name || g).join(" • ")}
-              &nbsp; • &nbsp;
-              ⏱ ${booking.show.movie.runtime || "--"} mins
-            </p>
-          </td>
-        </tr>
-      </table>
+                                                    <p style="margin:0;color:#ededed;line-height:1.8;font-size:15px;">
+                                                        ⭐ ${booking.show.movie.vote_average?.toFixed(1) || "N/A"} |
+                                                        🎭 ${(booking.show.movie.genres || []).map(g => g.name || g).join(" • ")} |
+                                                        ⏱ ${booking.show.movie.runtime || "--"} mins
+                                                    </p>
+                                                </td>
+                                            </tr>
+                                        </table>
 
-      <!-- Booking Details -->
-      <h3 style="color:#F84565;margin-bottom:15px;">
-        🎟 Booking Details
-      </h3>
+                                        <h2 style="margin:34px 0 16px;color:#F84565;font-size:26px;">
+                                            🎟 Booking Details
+                                        </h2>
 
-      <table width="100%" cellspacing="0" cellpadding="12" style="border-collapse:collapse;font-size:15px;">
-        <tr>
-          <td style="background:#fafafa;border:1px solid #eee;">
-            <strong>📅 Date</strong><br>
-            ${new Date(booking.show.showDateTime).toLocaleDateString("en-IN", { timeZone: "Asia/Kolkata" })}
-          </td>
+                                        <table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="border-collapse:collapse;">
+                                            <tr>
+                                                <td width="50%" style="padding:16px;border:1px solid #383838;color:#fff;">
+                                                    <b>📅 Date</b><br><br>
+                                                        ${new Date(booking.show.showDateTime).toLocaleDateString("en-IN", { timeZone: "Asia/Kolkata" })}
+                                                    </td>
 
-          <td style="background:#fafafa;border:1px solid #eee;">
-            <strong>🕒 Time</strong><br>
-            ${new Date(booking.show.showDateTime).toLocaleTimeString("en-IN", { hour: "2-digit", minute: "2-digit", timeZone: "Asia/Kolkata" })}
-          </td>
-        </tr>
+                                                        <td width="50%" style="padding:16px;border:1px solid #383838;color:#fff;">
+                                                            <b>🕒 Time</b><br><br>
+                                                                ${new Date(booking.show.showDateTime).toLocaleTimeString("en-IN", { hour: "2-digit", minute: "2-digit", timeZone: "Asia/Kolkata" })}
+                                                            </td>
+                                                            </tr>
 
-        <tr>
-          <td style="background:#fafafa;border:1px solid #eee;">
-            <strong>💺 Seats</strong><br>
-            ${booking.bookedSeats.join(", ")}
-          </td>
+                                                            <tr>
+                                                                <td style="padding:16px;border:1px solid #383838;color:#fff;">
+                                                                    <b>💺 Seats</b><br><br>
+                                                                        ${booking.bookedSeats.join(", ")}
+                                                                    </td>
 
-          <td style="background:#fafafa;border:1px solid #eee;">
-            <strong>💰 Amount Paid</strong><br>
-            ₹${booking.amount}
-          </td>
-        </tr>
-      </table>
+                                                                        <td style="padding:16px;border:1px solid #383838;color:#fff;">
+                                                                            <b>💰 Amount Paid</b><br><br>
+                                                                                ₹${booking.amount}
+                                                                            </td>
+                                                                            </tr>
+                                                                        </table>
 
-      <div style="margin:30px 0;padding:18px;background:#fff5f7;border-left:5px solid #F84565;border-radius:10px;color:#555;line-height:1.7;">
-        🍿 Please arrive at least <strong>15 minutes before the show</strong> for a hassle-free entry.
-      </div>
+                                                                        <table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="margin-top:28px;">
+                                                                            <tr>
+                                                                                <td style="background:#2b2023;border-left:5px solid #F84565;padding:18px;color:#f3f4f6;border-radius:10px;font-size:15px;line-height:1.7;">
+                                                                                    🍿 Please arrive <b>15 minutes before the show</b> for a smooth entry.
+                                                                                </td>
+                                                                            </tr>
+                                                                        </table>
 
-      <div style="text-align:center;margin:35px 0;">
-        <a href="https://cinemaverse.vercel.app/my-bookings"
-           style="display:inline-block;background:#F84565;color:#fff;text-decoration:none;padding:15px 34px;border-radius:10px;font-weight:bold;font-size:15px;">
-          🎬 View My Bookings
-        </a>
-      </div>
+                                                                        <table role="presentation" align="center" cellspacing="0" cellpadding="0" style="margin:34px auto;">
+                                                                            <tr>
+                                                                                <td bgcolor="#F84565" style="border-radius:8px;">
+                                                                                    <a href="https://cinemaverse.vercel.app/my-bookings"
+                                                                                        style="display:inline-block;padding:16px 34px;color:#fff;font:bold 16px Arial,sans-serif;text-decoration:none;">
+                                                                                        🎟 View My Bookings
+                                                                                    </a>
+                                                                                </td>
+                                                                            </tr>
+                                                                        </table>
 
-      <p style="font-size:16px;color:#444;">
-        Enjoy your show! ❤️<br><br>
-        <strong>Team CinemaVerse</strong>
-      </p>
+                                                                        <p style="color:#d4d4d8;font-size:16px;line-height:1.8;">
+                                                                            Enjoy your movie! ❤️<br><strong>Team CinemaVerse</strong>
+                                                                        </p>
 
-    </div>
+                                                                </td>
+                                                            </tr>
 
-    <div style="background:#f7f7f7;padding:22px;text-align:center;color:#777;font-size:13px;">
-      This is an automated email. Please do not reply.<br><br>
-      © ${new Date().getFullYear()} CinemaVerse. All Rights Reserved.
-    </div>
+                                                            <tr>
+                                                                <td style="background:#101010;padding:24px;text-align:center;color:#9ca3af;font:13px Arial,sans-serif;">
+                                                                    This is an automated email. Please do not reply.<br><br>
+                                                                        © ${new Date().getFullYear()} CinemaVerse. All Rights Reserved.
+                                                                    </td>
+                                                                    </tr>
 
-  </div>
-</div>
-`
+                                                                </table>
+
+                                                        </td>
+                                                    </tr>
+                                                </table>
+                                            </div>`
         })
     }
 )
+
+
 
 
 
