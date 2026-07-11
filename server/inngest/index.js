@@ -2,6 +2,7 @@ import { Inngest } from "inngest";
 import User from "../models/User.js";
 import Booking from "../models/Booking.js";
 import Show from "../models/Show.js";
+import sendEmail from "../configs/nodeMailer.js";
 
 // Create a client to send and receive events
 export const inngest = new Inngest({ id: "movie-ticket-booking" });
@@ -66,6 +67,8 @@ const releaseSeatsAndDeleteBooking = inngest.createFunction(
     { event: "app/checkpayment" },
     async ({ event, step }) => {
 
+        const
+
         // wait for 10 minutes
         const tenMinutesLater = new Date(Date.now() + 10 * 60 * 1000)
         await step.sleepUntil("wait-for-10-minutes", tenMinutesLater)
@@ -92,10 +95,13 @@ const releaseSeatsAndDeleteBooking = inngest.createFunction(
 
             }
 
-
         })
     }
 )
+
+
+// Inngest function to send email whenever user books a show
+
 
 
 
