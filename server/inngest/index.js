@@ -332,28 +332,27 @@ const sendShowReminders = inngest.createFunction(
 
                         tasks.push({
 
-                            // User
                             userName: booking.user.name,
                             userEmail: booking.user.email,
 
-                            // Movie
                             movieTitle: show.movie.title,
-                            moviePoster: show.movie.poster_path,
-                            movieBackdrop: show.movie.backdrop_path,
+
+                            moviePoster: `https://image.tmdb.org/t/p/w342${show.movie.poster_path}`,
+
+                            movieBackdrop: `https://image.tmdb.org/t/p/w1280${show.movie.backdrop_path}`,
+
                             runtime: show.movie.runtime,
                             genres: show.movie.genres,
 
-                            // Show
                             showTime: show.showDateTime,
 
-                            // Booking
                             bookingId: booking._id.toString(),
                             bookedSeats: booking.bookedSeats,
                             amount: booking.amount,
 
-                            // Theatre Information
                             theatre: "CinemaVerse Multiplex",
                             screen: "Screen 1",
+
                         });
                     }
                 }
@@ -539,7 +538,39 @@ const sendShowReminders = inngest.createFunction(
 );
 
 
+const sendNewShowNotification = inngest.createFunction(
+    {id : "send-new-show-notification"},
+    { event: "app/show.added"},
+    async ({ event }) => {
+
+        const { movieTitle, movieId } = event.data;
+
+        const users = await User.find({})
+
+        for(const user of Users){
+
+            const userEmail = user.email;
+            const userName = user.name;
+
+            const subject = `🎬 New Show Added: ${movieTitle}`;
+            const body = "";
+            
+            await sendEmail({
+                to: userEmail,
+                subject,
+                body
+            })
+
+        }
+
+        return {message: `Movie ${movieTitle} Notification sent.`}
+
+        
+
+    }
+)
 
 
 
-export const functions = [syncUserCreation, syncUserDeletion, syncUserUpdation, releaseSeatsAndDeleteBooking, sendBookingConfirmationEmail, sendShowReminders];
+
+export const functions = [syncUserCreation, syncUserDeletion, syncUserUpdation, releaseSeatsAndDeleteBooking, sendBookingConfirmationEmail, sendShowReminders, sendNewShowNotification];
