@@ -8,6 +8,11 @@ import Movie from "../models/Movie.js";
 // Create a client to send and receive events
 export const inngest = new Inngest({ id: "movie-ticket-booking" });
 
+const formatGenres = (genres) => {
+    if (!Array.isArray(genres)) return genres || "N/A";
+    return genres.map((genre) => genre?.name || genre).join(" • ");
+};
+
 // Inngest Functions
 
 // Inngest Function to save user data to a databasee
@@ -375,6 +380,7 @@ const sendShowReminders = inngest.createFunction(
                 sent: 0,
                 message: "No reminder emails to send.",
             };
+        }
 
 
         // ===================================================
@@ -440,7 +446,7 @@ const sendShowReminders = inngest.createFunction(
                                                                     <h2 style="margin:0;color:#fff;font-size:28px;">${task.movieTitle}</h2>
                                                                     <p style="margin:12px 0;color:#ededed;line-height:1.8;font-size:15px;">
                                                                         ⭐ Runtime: ${task.runtime} mins<br>
-                                                                            🎭 ${ Array.isArray(task.genres) ? task.genres.map(genre => genre.name).join(" • ") : task.genres }
+                                                                            🎭 ${formatGenres(task.genres)}
                                                                     </p>
                                                                 </td>
                                                             </tr>
@@ -540,9 +546,7 @@ const sendShowReminders = inngest.createFunction(
 );
 
 
-// ==========================================================
 // Inngest Function : Notify All Users About New Movie
-// ==========================================================
 
 const sendNewShowNotifications = inngest.createFunction(
 
@@ -678,12 +682,12 @@ const sendNewShowNotifications = inngest.createFunction(
                                                                     </h2>
 
                                                                     <p style="margin:12px 0;color:#bfbfbf;font-style:italic;font-size:16px;">
-                                                                        ${emailData.tagline}
+                                                                        ${emailData.tagline || ""}
                                                                     </p>
 
                                                                     <p style="margin:0;color:#ededed;line-height:1.8;font-size:15px;">
                                                                         ⭐ ${emailData.rating} |
-                                                                        🎭 ${Array.isArray(emailData.genres) ? emailData.genres.join(" • ") : emailData.genres} |
+                                                                        🎭 ${formatGenres(emailData.genres)} |
                                                                         ⏱ ${emailData.runtime} mins
                                                                     </p>
                                                                 </td>
