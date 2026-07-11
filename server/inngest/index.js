@@ -439,7 +439,7 @@ const sendShowReminders = inngest.createFunction(
                                                                     <h2 style="margin:0;color:#fff;font-size:28px;">${task.movieTitle}</h2>
                                                                     <p style="margin:12px 0;color:#ededed;line-height:1.8;font-size:15px;">
                                                                         ⭐ Runtime: ${task.runtime} mins<br>
-                                                                            🎭 ${Array.isArray(task.genres) ? task.genres.join(" • ") : task.genres}
+                                                                            🎭 ${ Array.isArray(task.genres) ? task.genres.map(genre => genre.name).join(" • ") : task.genres }
                                                                     </p>
                                                                 </td>
                                                             </tr>
