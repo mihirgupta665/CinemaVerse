@@ -123,6 +123,8 @@ const sendBookingConfirmationEmail = inngest.createFunction(
                 ? `https://image.tmdb.org/t/p/original${booking.show.movie.poster_path}`
                 : "https://via.placeholder.com/1280x720?text=CinemaVerse";
 
+        console.log(heroImage);
+
         await sendEmail({
             to: booking.user.email,
             subject: `Payment Confirmation for "${booking.show.movie.title}", Congratulations Ticket Booked Successfully!`,
