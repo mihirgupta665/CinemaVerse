@@ -64,7 +64,7 @@ const syncUserUpdation = inngest.createFunction(
 // Inngest Function to cancel booking and release the occupied seat of the show after 10 minutes when payent is not made and the payment link expires
 const releaseSeatsAndDeleteBooking = inngest.createFunction(
     { id: "release-seats-delete-booking" },
-    { event: "app/checkpayment"},
+    { event: "app/checkpayment" },
     async ({ event, step }) => {
 
         // wait for 10 minutes
@@ -104,6 +104,7 @@ const sendBookingConfirmationEmail = inngest.createFunction(
     { event: "app/show.booked" },
     async ({ event, step }) => {
         const { bookingId } = event.data;
+        
         const booking = await Booking.findById(bookingId).populate("user").populate({
             path: "show",
             populate: {
@@ -112,106 +113,131 @@ const sendBookingConfirmationEmail = inngest.createFunction(
             }
         });
 
+        if (!booking || !booking.show || !booking.show.movie) {
+            throw new Error("Booking or movie details not found.");
+        }
+
+        const heroImage = booking.show.movie.backdrop_path
+            ? `https://image.tmdb.org/t/p/original${booking.show.movie.backdrop_path}`
+            : booking.show.movie.poster_path
+                ? `https://image.tmdb.org/t/p/original${booking.show.movie.poster_path}`
+                : "https://via.placeholder.com/1280x720?text=CinemaVerse";
+
         await sendEmail({
             to: booking.user.email,
             subject: `Payment Confirmation for "${booking.show.movie.title}", Congratulations Ticket Booked Successfully!`,
             body: `
-<div style="margin:0;padding:40px 20px;background:#f4f4f4;font-family:Arial,sans-serif;">
-    <div style="max-width:600px;margin:0 auto;background:#ffffff;border-radius:12px;overflow:hidden;box-shadow:0 8px 20px rgba(0,0,0,0.08);">
+<div style="margin:0;padding:40px 20px;background:#eef2f7;font-family:Arial,Helvetica,sans-serif;">
+  <div style="max-width:680px;margin:0 auto;background:#ffffff;border-radius:20px;overflow:hidden;box-shadow:0 12px 35px rgba(0,0,0,.12);">
 
-        <!-- Header -->
-        <div style="background:#F84565;padding:30px;text-align:center;">
-            <h1 style="margin:0;color:#ffffff;font-size:30px;">
-                🎬 CinemaVerse
-            </h1>
-            <p style="margin:10px 0 0;color:#ffe8ec;font-size:16px;">
-                Your booking is confirmed for seats ${booking.bookedSeats.join(", ")}!
-            </p>
-        </div>
+    <!-- Hero Image -->
+    <img src="${heroImage}"
+         alt="${booking.show.movie.title}"
+         style="width:100%;height:340px;object-fit:cover;display:block;"/>
 
-        <!-- Body -->
-        <div style="padding:35px;color:#333333;">
+    <!-- Brand -->
+    <div style="background:#F84565;padding:28px;text-align:center;color:#fff;">
+      <div style="font-size:34px;font-weight:bold;">🎬 CinemaVerse</div>
+      <div style="margin-top:10px;font-size:17px;">
+        Booking Confirmed Successfully
+      </div>
+    </div>
 
-            <h2 style="margin-top:0;">
-                Hi ${booking.user.name}, 👋
+    <div style="padding:35px;">
+
+      <h2 style="margin:0;color:#222;">
+        Hi ${booking.user.name}, 👋
+      </h2>
+
+      <p style="color:#555;font-size:16px;line-height:1.8;margin-top:15px;">
+        Your booking has been confirmed and your seats are now reserved.
+        Thank you for choosing <strong>CinemaVerse</strong>. We hope you have an amazing movie experience!
+      </p>
+
+      <!-- Movie Card -->
+      <table width="100%" cellspacing="0" cellpadding="0" style="margin:30px 0;border:1px solid #ececec;border-radius:14px;background:#fafafa;">
+        <tr>
+          <td width="150" style="padding:20px;">
+            <img src="https://image.tmdb.org/t/p/w342${booking.show.movie.poster_path}"
+                 alt="${booking.show.movie.title}"
+                 style="width:120px;border-radius:10px;display:block;">
+          </td>
+
+          <td style="padding:20px;vertical-align:top;">
+            <h2 style="margin:0;color:#222;">
+              ${booking.show.movie.title}
             </h2>
 
-            <p style="font-size:16px;line-height:1.7;">
-                Thank you for booking with <strong>CinemaVerse</strong>.
-                Your tickets have been successfully confirmed and seat have now been reserved for you.
+            <p style="margin:10px 0;color:#666;font-style:italic;">
+              ${booking.show.movie.tagline || ""}
             </p>
 
-            <div style="margin:30px 0;padding:20px;background:#fafafa;border-left:5px solid #F84565;border-radius:8px;">
-
-                <h3 style="margin-top:0;color:#F84565;">
-                    🎥 Booking Details
-                </h3>
-
-                <p style="margin:10px 0;">
-                    <strong>Movie:</strong><br>
-                    ${booking.show.movie.title}
-                </p>
-
-                <p style="margin:10px 0;">
-                    <strong>Date:</strong><br>
-                    ${new Date(booking.show.showDateTime).toLocaleDateString(
-                "en-IN",
-                { timeZone: "Asia/Kolkata" }
-            )}
-                </p>
-
-                <p style="margin:10px 0;">
-                    <strong>Time:</strong><br>
-                    ${new Date(booking.show.showDateTime).toLocaleTimeString(
-                "en-IN",
-                {
-                    hour: "2-digit",
-                    minute: "2-digit",
-                    timeZone: "Asia/Kolkata",
-                }
-            )}
-                </p>
-
-                <p style="margin:10px 0;">
-                    <strong>Seats:</strong><br>
-                    ${booking.bookedSeats.join(", ")}
-                </p>
-
-                <p style="margin:10px 0;">
-                    <strong>Amount Paid:</strong><br>
-                    ₹${booking.amount}
-                </p>
-
-            </div>
-
-            <div style="padding:18px;background:#fff7f8;border-radius:8px;">
-                <p style="margin:0;font-size:15px;line-height:1.7;">
-                    🍿 Please arrive at least
-                    <strong>15 minutes before the show</strong>
-                    to avoid any inconvenience.
-                </p>
-            </div>
-
-            <p style="margin-top:30px;font-size:16px;">
-                We hope you enjoy your movie! 🍿
+            <p style="margin:0;color:#555;font-size:15px;">
+              ⭐ <strong>${booking.show.movie.vote_average?.toFixed(1) || "N/A"}</strong>
+              &nbsp; • &nbsp;
+              🎭 ${(booking.show.movie.genres || []).map(g => g.name || g).join(" • ")}
+              &nbsp; • &nbsp;
+              ⏱ ${booking.show.movie.runtime || "--"} mins
             </p>
+          </td>
+        </tr>
+      </table>
 
-            <p style="font-size:16px;">
-                Happy Watching,<br>
-                <strong>Team CinemaVerse ❤️</strong>
-            </p>
+      <!-- Booking Details -->
+      <h3 style="color:#F84565;margin-bottom:15px;">
+        🎟 Booking Details
+      </h3>
 
-        </div>
+      <table width="100%" cellspacing="0" cellpadding="12" style="border-collapse:collapse;font-size:15px;">
+        <tr>
+          <td style="background:#fafafa;border:1px solid #eee;">
+            <strong>📅 Date</strong><br>
+            ${new Date(booking.show.showDateTime).toLocaleDateString("en-IN", { timeZone: "Asia/Kolkata" })}
+          </td>
 
-        <!-- Footer -->
-        <div style="background:#f7f7f7;padding:20px;text-align:center;color:#777777;font-size:13px;">
-            This is an automated confirmation email.<br>
-            Please do not reply to this message.
-            <br><br>
-            © ${new Date().getFullYear()} CinemaVerse. All Rights Reserved.
-        </div>
+          <td style="background:#fafafa;border:1px solid #eee;">
+            <strong>🕒 Time</strong><br>
+            ${new Date(booking.show.showDateTime).toLocaleTimeString("en-IN", { hour: "2-digit", minute: "2-digit", timeZone: "Asia/Kolkata" })}
+          </td>
+        </tr>
+
+        <tr>
+          <td style="background:#fafafa;border:1px solid #eee;">
+            <strong>💺 Seats</strong><br>
+            ${booking.bookedSeats.join(", ")}
+          </td>
+
+          <td style="background:#fafafa;border:1px solid #eee;">
+            <strong>💰 Amount Paid</strong><br>
+            ₹${booking.amount}
+          </td>
+        </tr>
+      </table>
+
+      <div style="margin:30px 0;padding:18px;background:#fff5f7;border-left:5px solid #F84565;border-radius:10px;color:#555;line-height:1.7;">
+        🍿 Please arrive at least <strong>15 minutes before the show</strong> for a hassle-free entry.
+      </div>
+
+      <div style="text-align:center;margin:35px 0;">
+        <a href="https://cinemaverse.vercel.app/my-bookings"
+           style="display:inline-block;background:#F84565;color:#fff;text-decoration:none;padding:15px 34px;border-radius:10px;font-weight:bold;font-size:15px;">
+          🎬 View My Bookings
+        </a>
+      </div>
+
+      <p style="font-size:16px;color:#444;">
+        Enjoy your show! ❤️<br><br>
+        <strong>Team CinemaVerse</strong>
+      </p>
 
     </div>
+
+    <div style="background:#f7f7f7;padding:22px;text-align:center;color:#777;font-size:13px;">
+      This is an automated email. Please do not reply.<br><br>
+      © ${new Date().getFullYear()} CinemaVerse. All Rights Reserved.
+    </div>
+
+  </div>
 </div>
 `
         })
