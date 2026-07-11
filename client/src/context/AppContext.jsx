@@ -21,6 +21,11 @@ export const AppProvider = ({ children }) => {
     const [shows, setShows] = useState([])
     const [favoriteMovies, setFavoriteMovies] = useState([])
 
+    const redirectToLogin = (redirectPath) => {
+        const targetPath = redirectPath || `${location.pathname}${location.search}${location.hash}`;
+        navigate(`/login?redirect=${encodeURIComponent(targetPath)}`);
+    }
+
 
 
 
@@ -51,7 +56,7 @@ export const AppProvider = ({ children }) => {
 
             const { data } = await axios.get("/api/show/all")
             if (data.success) {
-                setShows(data.shows)
+                setShows((data.shows || []).filter(Boolean))
             }
             else {
                 toast.error(data.message)
@@ -128,6 +133,8 @@ export const AppProvider = ({ children }) => {
 
         favoriteMovies,
         fetchFavoriteMovies,
+
+        redirectToLogin,
 
 
     }

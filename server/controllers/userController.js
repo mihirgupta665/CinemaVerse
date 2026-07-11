@@ -15,7 +15,11 @@ export const getUserBookings = async (req, res) => {
             })
             .sort({ createdAt: -1 });
 
-        res.json({ success: true, bookings });
+        const validBookings = bookings.filter(
+            (booking) => booking.show && booking.show.movie
+        );
+
+        res.json({ success: true, bookings: validBookings });
 
     }
     catch (error) {

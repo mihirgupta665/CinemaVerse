@@ -7,6 +7,7 @@ import MovieDetails from './pages/MovieDetails'
 import SeatLayout from './pages/SeatLayout'
 import MyBookings from './pages/MyBookings'
 import Favorite from './pages/Favorite'
+import Login from './pages/Login'
 import { ToastContainer } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css'
 import Footer from './components/Footer'
@@ -15,7 +16,6 @@ import Dashboard from './pages/admin/Dashboard'
 import AddShows from './pages/admin/AddShows'
 import ListShows from './pages/admin/ListShows'
 import ListBookings from './pages/admin/ListBookings'
-import { assets } from './assets/assets'
 import { useAppContext } from './context/AppContext'
 import { SignIn } from '@clerk/clerk-react'
 import Loading from './components/Loading'
@@ -35,6 +35,7 @@ const App = () => {
             <Routes>
 
                 <Route path="/" element={<Home />} />
+                <Route path="/login" element={<Login />} />
                 <Route path="/movies" element={<Movies />} />
                 <Route path="/movies/:id" element={<MovieDetails />} />
                 <Route path="/movies/:id/:date" element={<SeatLayout />} />

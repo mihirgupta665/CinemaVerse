@@ -8,6 +8,7 @@ import { useAppContext } from '../context/AppContext'
 const FeaturedSection = () => {
 
     const {navigate, shows} = useAppContext()
+    const featuredMovies = (shows || []).filter(Boolean).slice(0, 4)
 
     return (
         <div className='px-6 md:px-16 lg:px-24 xl:px-44 overflow-hidden'>
@@ -22,7 +23,7 @@ const FeaturedSection = () => {
             </div>
 
             <div className='flex flex-wrap max-sm:justify-center gap-8 mt-8'>
-                {shows.slice(0, 4).map((show) => (
+                {featuredMovies.map((show) => (
                     <MovieCard key={show._id} movie={show} />
                 ))}
             </div>

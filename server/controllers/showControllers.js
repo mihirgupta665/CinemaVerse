@@ -3,6 +3,19 @@ import Movie from "../models/Movie.js";
 import Show from "../models/Show.js";
 import { inngest } from "../inngest/index.js";
 
+const getValidShows = async (query = {}, sort = { showDateTime: 1 }) => {
+    const shows = await Show.find(query).populate("movie").sort(sort);
+    const orphanShowIds = shows
+        .filter((show) => !show.movie)
+        .map((show) => show._id);
+
+    if (orphanShowIds.length) {
+        await Show.deleteMany({ _id: { $in: orphanShowIds } });
+    }
+
+    return shows.filter((show) => show.movie);
+};
+
 const getTmdbRequestConfig = () => {
     const tmdbCredential = process.env.TMDB_API_KEY;
 
@@ -213,13 +226,17 @@ export const addShows = async (req, res) => {
 // API to get all shows from the database
 export const getShows = async (req, res) => {
     try {
-        
-        const shows = await Show.find({ showDateTime : {$gte : new Date()} }).populate("movie").sort({showDateTime: 1})
 
-        // filter unique Shows
-        const uniqueShows = new Set(shows.map(show => show.movie))
+        const shows = await getValidShows(
+            { showDateTime: { $gte: new Date() } },
+            { showDateTime: 1 }
+        );
 
-        res.json({success:true, shows: Array.from(uniqueShows)})
+        const uniqueShows = Array.from(
+            new Map(shows.map((show) => [show.movie._id.toString(), show.movie])).values()
+        );
+
+        res.json({ success: true, shows: uniqueShows })
 
     }
     catch (error) {
@@ -240,6 +257,14 @@ export const getShow = async (req, res) => {
 
         // get movie gte current date otherwise just no dateTime will be visible
         const movie = await Movie.findById(movieId);
+        if (!movie) {
+            await Show.deleteMany({ movie: movieId });
+            return res.status(404).json({
+                success: false,
+                message: "This movie is no longer available.",
+            });
+        }
+
         const dateTime = {}; 
 
         shows.forEach((show) => {

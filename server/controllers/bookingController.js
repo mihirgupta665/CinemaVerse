@@ -47,6 +47,16 @@ export const createBooking = async (req, res) => {
 
         // Get the show details
         const showData = await Show.findById(showId).populate("movie");
+        if (!showData || !showData.movie) {
+            if (showData && !showData.movie) {
+                await Show.findByIdAndDelete(showId);
+            }
+
+            return res.json({
+                success: false,
+                message: "This show is no longer available.",
+            });
+        }
 
         // Create a new booking
         const booking = await Booking.create({
@@ -120,6 +130,12 @@ export const getOccupiedSeats = async (req, res) => {
 
         const { showId } = req.params;
         const showData = await Show.findById(showId)
+        if (!showData) {
+            return res.json({
+                success: false,
+                message: "This show is no longer available.",
+            });
+        }
 
         const occupiedSeats = Object.keys(showData.occupiedSeats)  // returns array of string for seats
 

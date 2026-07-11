@@ -5,13 +5,13 @@ import BlurCircle from '../components/BlurCircle'
 import timeFormat from '../lib/timeFormat'
 import { dateFormat } from '../lib/dateFormat'
 import { useAppContext } from '../context/AppContext'
-import { Link } from 'react-router-dom'
+import { Link, Navigate } from 'react-router-dom'
 
 const MyBookings = () => {
 
     const currency = import.meta.env.VITE_CURRENCY
 
-    const { navigate, axios, user, getToken, image_base_url } = useAppContext()
+    const { navigate, axios, user, getToken, image_base_url, location } = useAppContext()
 
 
     const [bookings, setBookings] = useState([])
@@ -42,6 +42,10 @@ const MyBookings = () => {
             getMyBookings()
         }
     }, [user])
+
+    if (!user) {
+        return <Navigate to={`/login?redirect=${encodeURIComponent(location.pathname + location.search + location.hash)}`} replace />
+    }
 
     return !isLoading ? (
         <div className='relative px-6 md:px-16 lg:px-40 pt-30 md:pt-40 min-h-[80vh]'>

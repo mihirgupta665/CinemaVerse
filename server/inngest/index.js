@@ -135,7 +135,6 @@ const sendBookingConfirmationEmail = inngest.createFunction(
             to: booking.user.email,
             subject: `Payment Confirmation for "${booking.show.movie.title}", Congratulations Ticket Booked Successfully!`,
             body: `
-< !--CinemaVerse Production Email -- >
             <div style="margin:0;padding:24px;background:#eceff3;">
                 <table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="border-collapse:collapse;">
                     <tr>
@@ -247,7 +246,7 @@ const sendBookingConfirmationEmail = inngest.createFunction(
                                                                         </table>
 
                                                                         <p style="color:#d4d4d8;font-size:16px;line-height:1.8;">
-                                                                            Enjoy your movie! ❤️<br><strong>Team CinemaVerse</strong>
+                                                                            Enjoy your movie 🍿! <br><strong>Team CinemaVerse❤️</strong>
                                                                         </p>
 
                                                                 </td>

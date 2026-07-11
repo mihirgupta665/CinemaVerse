@@ -2,18 +2,14 @@ import React, { useEffect } from 'react'
 import MovieCard from '../components/MovieCard'
 import BlurCircle from '../components/BlurCircle'
 import { useAppContext } from '../context/AppContext'
-import { SignIn } from '@clerk/clerk-react'
+import { Navigate } from 'react-router-dom'
 
 const Favorite = () => {
 
-    const { favoriteMovies, user, fetchFavoriteMovies } = useAppContext()
+    const { favoriteMovies, user, fetchFavoriteMovies, navigate, location } = useAppContext()
 
     if (!user) {
-        return (
-            <div className="flex mt-5 items-center justify-center min-h-screen">
-                <SignIn fallbackRedirectUrl="/favorite" />
-            </div>
-        );
+        return <Navigate to={`/login?redirect=${encodeURIComponent(location.pathname + location.search + location.hash)}`} replace />
     }
 
     // let c=0;
