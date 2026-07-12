@@ -18,11 +18,43 @@ A modern full-stack movie ticket booking platform that enables users to discover
 
 # 🌐 Live Demo
 
-### Frontend
+Experience CinemaVerse live and explore the complete movie booking workflow, including authentication, seat reservation, Stripe test payments, and the admin dashboard.
 
-https://cinemaverse-three.vercel.app/
+### 🚀 Live Application
 
-> **Note:** Since Stripe is running in test mode, please use Stripe's test card details while making payments.
+👉 🔗 **https://cinemaverse-three.vercel.app/**
+
+> **Note:** Payments are processed using **Stripe Test Mode**. Use Stripe's official test card details to simulate successful transactions.
+
+---
+
+# 📸 Screenshots
+
+Take a look at some of the key user and admin experiences that CinemaVerse offers.
+
+| 🏠 Home Page | 🎬 Movies |
+|--------------|-----------|
+| ![](screenshots/01-home-page.png) | ![](screenshots/02-movies-page.png) |
+
+| 🆕 Latest Releases | 🎥 Trailer Experience |
+|--------------------|-----------------------|
+| ![](screenshots/03-releases-page.png) | ![](screenshots/04-trailer-section.png) |
+
+| 🎞 Movie Details | 💺 Seat Selection |
+|------------------|-------------------|
+| ![](screenshots/05-movie-details.png) | ![](screenshots/06-seat-selection.png) |
+
+| 💳 Stripe Checkout | 📖 My Bookings |
+|---------------------|----------------|
+| ![](screenshots/07-stripe-checkout.png) | ![](screenshots/08-my-bookings.png) |
+
+| ❤️ Favorites | 📊 Admin Dashboard |
+|---------------|--------------------|
+| ![](screenshots/09-favorites.png) | ![](screenshots/10-admin-dashboard.png) |
+
+| ➕ Add Show | 🎬 Manage Shows |
+|-------------|-----------------|
+| ![](screenshots/11-add-show.png) | ![](screenshots/12-manage-shows.png) |
 
 ---
 
