@@ -73,8 +73,14 @@ const MovieDetails = () => {
     }
 
     useEffect(() => {
-        getShow()
-    }, [id])
+        window.scrollTo({
+            top: 0,
+            left: 0,
+            behavior: "instant", // or "auto"
+        });
+
+        getShow();
+    }, [id]);
 
     useEffect(() => {
         if (user) {

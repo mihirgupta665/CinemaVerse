@@ -10,7 +10,6 @@ A modern full-stack movie ticket booking platform that enables users to discover
 ![MongoDB](https://img.shields.io/badge/MongoDB-Mongoose-47A248?logo=mongodb)
 ![Stripe](https://img.shields.io/badge/Stripe-Payments-635BFF?logo=stripe)
 ![Clerk](https://img.shields.io/badge/Clerk-Authentication-6C47FF)
-![License](https://img.shields.io/badge/License-MIT-green)
 
 </p>
 

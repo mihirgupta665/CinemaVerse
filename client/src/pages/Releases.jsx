@@ -214,8 +214,9 @@ const Releases = () => {
 
                                                     <button
                                                         onClick={() => {
+                                                            scrollTo(0, 0)
                                                             navigate(`/movies/${movie._id}`);
-                                                            scrollTo(0, 0);
+                                                            scrollTo(0, 0)
                                                         }}
                                                         className="inline-flex items-center gap-2 rounded-full bg-primary px-6 py-3 text-sm font-semibold text-black transition duration-300 hover:scale-105 hover:bg-primary-dull"
                                                     >

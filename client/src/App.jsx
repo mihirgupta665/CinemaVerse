@@ -1,5 +1,6 @@
 import React from 'react'
 import Navbar from './components/Navbar'
+import ScrollToTop from './components/ScrollToTop'
 import { Route, Routes, matchPath, useLocation } from 'react-router-dom'
 import Home from './pages/Home'
 import Movies from './pages/Movies'
@@ -27,6 +28,7 @@ const App = () => {
     const location = useLocation();
 
     const isAdminRoute = location.pathname.startsWith("/admin");
+
     const knownClientRoutes = [
         "/",
         "/login",
@@ -38,9 +40,11 @@ const App = () => {
         "/my-bookings",
         "/loading/:nextUrl",
     ];
+
     const isKnownClientRoute = knownClientRoutes.some((route) =>
         matchPath({ path: route, end: true }, location.pathname)
     );
+
     const isNotFoundRoute = !isAdminRoute && !isKnownClientRoute;
 
     const { user } = useAppContext();
@@ -50,6 +54,9 @@ const App = () => {
             <ToastContainer autoClose={3000} theme="dark" />
 
             {!isAdminRoute && !isNotFoundRoute && <Navbar />}
+
+            {/* Automatically scroll to top on every route change */}
+            <ScrollToTop />
 
             <Routes>
 
