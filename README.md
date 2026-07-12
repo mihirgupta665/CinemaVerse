@@ -17,18 +17,76 @@ A modern full-stack movie ticket booking platform that enables users to discover
 
 # 🌐 Live Demo
 
-Experience CinemaVerse live and explore the complete movie booking workflow, including authentication, seat reservation, Stripe test payments, and the admin dashboard.
+Experience **CinemaVerse** live and explore the complete movie ticket booking workflow—from authentication and movie discovery to secure Stripe payments, automated email confirmations, and the powerful admin dashboard.
 
-### 🚀 Live Application
+<p align="center">
+  <a href="https://cinemaverse-three.vercel.app/" target="_blank">
+    <img src="https://img.shields.io/badge/🚀%20Launch%20CinemaVerse-Live%20Application-2563EB?style=for-the-badge" alt="Launch CinemaVerse">
+  </a>
+</p>
 
-👉 🔗 **https://cinemaverse-three.vercel.app/**
+<p align="center">
+  <strong>🔗 Live URL</strong><br>
+  👉 <a href="https://cinemaverse-three.vercel.app/">
+    https://cinemaverse-three.vercel.app/
+  </a>
+</p>
 
-> **Note:** Payments are processed using **Stripe Test Mode**. Use Stripe's official test card details to simulate successful transactions.
+> **💳 Stripe Test Mode:** Payments are processed using **Stripe Test Mode**. Use Stripe's official test card details to simulate successful transactions.
 
 ---
 
-# 📸 Screenshots
+# 🎬 Demo Preview
 
+Get a quick preview of the complete CinemaVerse experience in just **25 seconds**.
+
+<p align="center">
+  <img src="./screenshots/demo-preview.gif" alt="CinemaVerse Demo Preview" width="100%">
+</p>
+
+<p align="center">
+  <i>
+    Browse Movies • View Details • Watch Trailer • Select Seats • Stripe Checkout • Booking History • Favorites • Admin Dashboard
+  </i>
+</p>
+
+---
+
+# 🎥 Full Application Walkthrough
+
+Watch the complete **2-minute end-to-end demonstration** showcasing every major feature of CinemaVerse.
+
+<p align="center">
+  <a href="https://github.com/user-attachments/assets/47d5c05e-a391-4ad2-beda-7a412c39a66e" target="_blank">
+    <img src="https://img.shields.io/badge/🎥%20Watch%202--Minute%20Demo-Full%20Walkthrough-EA4AAA?style=for-the-badge" alt="Watch 2-Minute Demo">
+  </a>
+</p>
+
+<p align="center">
+  <strong>🎥 Video URL</strong><br>
+  <a href="https://github.com/user-attachments/assets/47d5c05e-a391-4ad2-beda-7a412c39a66e">
+    👉 🔗 https://github.com/user-attachments/assets/47d5c05e-a391-4ad2-beda-7a412c39a66e
+  </a>
+</p>
+
+<p align="center">
+  <sub>
+    ✔ Authentication &nbsp;•&nbsp;
+    ✔ Movie Discovery &nbsp;•&nbsp;
+    ✔ Trailer Playback &nbsp;•&nbsp;
+    ✔ Seat Selection &nbsp;•&nbsp;
+    ✔ Stripe Checkout &nbsp;•&nbsp;
+    ✔ Booking History &nbsp;•&nbsp;
+    ✔ Favorites &nbsp;•&nbsp;
+    ✔ Admin Dashboard &nbsp;•&nbsp;
+    ✔ Add Shows &nbsp;•&nbsp;
+    ✔ Manage Shows
+  </sub>
+</p>
+
+---
+
+# 📸 Application Screenshots
 Take a look at some of the key user and admin experiences that CinemaVerse offers.
 
 | 🏠 Home Page | 🎬 Movies |
