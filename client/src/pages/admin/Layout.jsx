@@ -7,27 +7,30 @@ import Loading from '../../components/Loading'
 
 const Layout = () => {
 
-    const {isAdmin, fetchIsAdmin} = useAppContext()
+    const { isAdmin, fetchIsAdmin } = useAppContext()
 
-    // useEffect(() => {
-    //     fetchIsAdmin()
-    // }, [])
+    useEffect(() => {
+        document.body.classList.add("admin-route")
+        return () => {
+            document.body.classList.remove("admin-route")
+        }
+    }, [])
 
-    return isAdmin 
-    ? (
-        <>
-            <AdminNavbar />
-            <div className='flex'>
-                <AdminSidebar />
-                <div className='flex-1 px-4 py-10 md : px-10 h-[calc(100vh-64px)] overflow-y-auto'>
-                    <Outlet />
+    return isAdmin
+        ? (
+            <>
+                <AdminNavbar />
+                <div className='flex'>
+                    <AdminSidebar />
+                    <div className='flex-1 px-4 py-10 md:px-10 h-[calc(100vh-64px)] box-border overflow-y-auto admin-content-scroll'>
+                        <Outlet />
+                    </div>
                 </div>
-            </div>
-        </>
-    )
-    : (
-        <Loading />
-    )
+            </>
+        )
+        : (
+            <Loading />
+        )
 }
 
 export default Layout
