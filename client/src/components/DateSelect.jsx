@@ -36,13 +36,18 @@ const DateSelect = ({ dateTime, id }) => {
                     <div className='flex items-center gap-6 text-sm mt-5'>
                         <ChevronLeftIcon width={28}/>
                         <span className='grid grid-cols-3 md:flex flex-wrap md:max-w-lg gap-4'>
-                            {Object.keys(dateTime).map((date) => (
-                                <button onClick={() => setSelected(date)} key={date} className={`flex flex-col items-center justify-center h-14 w-14 aspect-square rounded cursor-pointer ${selected === date ? "bg-primary text-white" : "border border-primary/70"} `}>
-                                    <span>{new Date(date).getDate()}</span>
-                                    {/* format in US format string for date and show the month only in short form too */}
-                                    <span>{new Date(date).toLocaleDateString("en-US", {month: "short"})}</span>
-                                </button>
-                            ))}
+                            {Object.keys(dateTime).map((date) => {
+                                // date is in YYYY-MM-DD format (en-CA). Parse as local date to avoid UTC shifts.
+                                const [y, m, d] = date.split("-");
+                                const parsed = new Date(Number(y), Number(m) - 1, Number(d));
+                                return (
+                                    <button onClick={() => setSelected(date)} key={date} className={`flex flex-col items-center justify-center h-14 w-14 aspect-square rounded cursor-pointer ${selected === date ? "bg-primary text-white" : "border border-primary/70"} `}>
+                                        <span>{parsed.getDate()}</span>
+                                        {/* format in US format string for date and show the month only in short form too */}
+                                        <span>{parsed.toLocaleDateString("en-US", { month: "short" })}</span>
+                                    </button>
+                                )
+                            })}
                         </span>
                         <ChevronRightIcon width={28}/>
                     </div>

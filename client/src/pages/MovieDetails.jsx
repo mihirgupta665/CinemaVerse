@@ -109,7 +109,20 @@ const MovieDetails = () => {
 
     const movie = show.movie
     const relatedMovies = (shows || []).filter((item) => item && item._id !== id).slice(0, 4)
-    const showDates = Object.keys(show.dateTime || {})
+
+    // If server provided rawShows, group by the visitor's local timezone on the client
+    let computedDateTime = show.dateTime || {}
+    if (show.rawShows && Array.isArray(show.rawShows)) {
+        computedDateTime = {}
+        show.rawShows.forEach((s) => {
+            // Use en-CA format (YYYY-MM-DD) while using visitor's local timezone for grouping
+            const localDate = new Date(s.showDateTime).toLocaleDateString('en-CA');
+            if (!computedDateTime[localDate]) computedDateTime[localDate] = []
+            computedDateTime[localDate].push({ time: s.showDateTime, showId: s.showId })
+        })
+    }
+
+    const showDates = Object.keys(computedDateTime || {})
 
     return (
         <div className='px-6 md:px-16 lg:px-40 pt-30 md:pt-50'>
@@ -162,7 +175,7 @@ const MovieDetails = () => {
                 </div>
             </div>
 
-            {showDates.length > 0 && <DateSelect dateTime={show.dateTime} id={id} />}
+            {showDates.length > 0 && <DateSelect dateTime={computedDateTime} id={id} />}
 
             <p className='text-lg font-medium mt-20 mb-20'>You May Also Like </p>
             <div className='flex flex-wrap max-sm:justify-center gap-8'>

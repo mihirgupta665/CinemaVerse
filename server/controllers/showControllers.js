@@ -297,15 +297,19 @@ export const getShow = async (req, res) => {
 
         const dateTime = {};
 
+        // Build grouped dateTime (server-side) using IST to preserve existing behavior
         shows.forEach((show) => {
-            const date = show.showDateTime.toISOString().split("T")[0];
+            const date = new Date(show.showDateTime).toLocaleDateString('en-CA', { timeZone: 'Asia/Kolkata' });
             if (!dateTime[date]) {
                 dateTime[date] = []
             }
             dateTime[date].push({ time: show.showDateTime, showId: show._id })
         })
 
-        res.json({ success: true, movie, dateTime })
+        // Also return rawShows (ISO strings) so clients can group by the visitor's local timezone if desired
+        const rawShows = shows.map((show) => ({ showId: show._id, showDateTime: new Date(show.showDateTime).toISOString() }));
+
+        res.json({ success: true, movie, dateTime, rawShows })
 
     }
     catch (error) {
