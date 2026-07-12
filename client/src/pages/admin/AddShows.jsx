@@ -30,6 +30,16 @@ const AddShows = () => {
         }
     }
 
+    const getIsoDateTimeString = (date, time) => {
+        if (!date || !time) return null;
+
+        const [year, month, day] = date.split("-").map(Number);
+        const [hours, minutes] = time.split(":").map(Number);
+        const localDate = new Date(year, month - 1, day, hours, minutes);
+
+        return localDate.toISOString();
+    };
+
     const fetchNowPlayingMovies = async () => {
 
         try {
@@ -97,9 +107,12 @@ const AddShows = () => {
                 return
             }
 
-            const showsInput = Object.entries(dateTimeSelection).map(([date, time]) => (
-                { date, time }
-            ))
+            const showsInput = Object.entries(dateTimeSelection).flatMap(([date, times]) =>
+                times.map((time) => ({
+                    date,
+                    time: getIsoDateTimeString(date, time)
+                }))
+            )
 
             const payload = {
                 movieId: selectedMovie,

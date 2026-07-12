@@ -192,17 +192,21 @@ export const addShows = async (req, res) => {
         // this date object have date property and time property
         // time property itself has an array of time for all show
         const showsToCreate = [];
-        showsInput.forEach(show => {
-            const showDate = show.date;
-            show.time.forEach((time) => {
-                const dateTimeString = `${showDate}T${time}`;
+        showsInput.forEach((show) => {
+            const timeValues = Array.isArray(show.time) ? show.time : [show.time];
+
+            timeValues.forEach((timeValue) => {
+                const dateTimeString = typeof timeValue === "string" && timeValue.includes("T")
+                    ? timeValue
+                    : `${show.date}T${timeValue}`;
+
                 showsToCreate.push({
                     movie: movie._id,
                     showDateTime: new Date(dateTimeString),
                     showPrice,
                     occupiedSeats: {}
-                })
-            })
+                });
+            });
         });
 
         if (showsToCreate.length > 1) {
