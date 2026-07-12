@@ -15,6 +15,36 @@ body {
     background-color: #09090B;
 }
 
+html,
+body {
+    scrollbar-width: thin;
+    scrollbar-color: #c91111 #09090B;
+}
+
+html::-webkit-scrollbar,
+body::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+}
+
+html::-webkit-scrollbar-track,
+body::-webkit-scrollbar-track {
+    background: #09090B;
+    border-radius: 999px;
+}
+
+html::-webkit-scrollbar-thumb,
+body::-webkit-scrollbar-thumb {
+    background: linear-gradient(180deg, #f84565, #c91111);
+    border-radius: 999px;
+    border: 2px solid #09090B;
+}
+
+html::-webkit-scrollbar-thumb:hover,
+body::-webkit-scrollbar-thumb:hover {
+    background: #991b1b;
+}
+
 /* ===========================
    Premium CinemaVerse Scrollbar
 =========================== */
