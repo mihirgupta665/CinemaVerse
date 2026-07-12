@@ -22,10 +22,10 @@ const AddShows = () => {
     const [addingShow, setAddingShow] = useState(false);
 
     const enableAddButton = () => {
-        if (selectedMovie && Object.keys(dateTimeSelection).length>0 && showPrice ){
+        if (selectedMovie && Object.keys(dateTimeSelection).length > 0 && showPrice) {
             return true
         }
-        else{
+        else {
             return false
         }
     }
@@ -123,23 +123,23 @@ const AddShows = () => {
             const { data } = await axios.post("/api/show/add", payload, { headers: { Authorization: `Bearer ${await getToken()}` } })
             // console.log(data);
 
-            if(data.success){
+            if (data.success) {
                 toast.success(data.message)
                 setSelectedMovie(null)
                 setDateTimeSelection({})
                 setDateTimeInput("")
-                setShowPrice("") 
+                setShowPrice("")
             }
-            else{
+            else {
                 toast.error(data.message)
             }
 
         }
         catch (error) {
-            console.log("Error Occured while simulating an API call to add the Show in now playing movies list. Error : ",error);
-            toast.error("Network Error Please Try Again\n"+error.message)
+            console.log("Error Occured while simulating an API call to add the Show in now playing movies list. Error : ", error);
+            toast.error("Network Error Please Try Again\n" + error.message)
         }
-        finally{
+        finally {
             setAddingShow(false)
         }
     }
