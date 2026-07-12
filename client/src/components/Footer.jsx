@@ -34,7 +34,7 @@ const Footer = () => {
                         <li><a href="#" onClick={() => navigate("/")} >Home</a></li>
                         <li><a href="#" onClick={() => navigate("/movies")} >Movies</a></li>
                         <li><a href="#" onClick={() => navigate("/")} >Theaters</a></li>
-                        <li><a href="#" onClick={() => navigate("/")} >Releases</a></li>
+                        <li><a href="#" onClick={() => navigate("/releases")} >Releases</a></li>
                     </ul>
                 </div>
                 <div className="text-center md:text-left min-w-0">
@@ -47,7 +47,7 @@ const Footer = () => {
                 </div>
             </div>
             <p className="pt-4 text-center text-xs sm:text-sm pb-5">
-               MIHIR GUPTA | Copyright {new Date().getFullYear()} &copy; All Right Reserved
+                MIHIR GUPTA | Copyright {new Date().getFullYear()} &copy; All Right Reserved
             </p>
         </footer>
     )

@@ -161,7 +161,7 @@ export const addShows = async (req, res) => {
                 runtime: movieApiData.runtime,
             }
 
-            const moviedoc = await Movie.create(movieDetails); 
+            const moviedoc = await Movie.create(movieDetails);
             movie = moviedoc;
             // console.log(movieDetails);
 
@@ -203,13 +203,13 @@ export const addShows = async (req, res) => {
                     occupiedSeats: {}
                 })
             })
-        }); 
+        });
 
-        if(showsToCreate.length > 1){
+        if (showsToCreate.length > 1) {
             await Show.insertMany(showsToCreate)
             res.json({ success: true, message: "Shows Added Successfully!" })
         }
-        else if(showsToCreate.length === 1){
+        else if (showsToCreate.length === 1) {
             await Show.insertMany(showsToCreate)
             res.json({ success: true, message: "Show Added Successfully!" })
         }
@@ -245,15 +245,45 @@ export const getShows = async (req, res) => {
     }
 }
 
+// API to get recent shows added within the last 7 days
+export const getRecentShows = async (req, res) => {
+    try {
+        const sevenDaysAgo = new Date()
+        sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7)
+
+        const shows = await Show.find({
+            showDateTime: { $gte: sevenDaysAgo }
+        })
+            .populate('movie')
+            .sort({ showDateTime: -1 })
+
+        const orphanShowIds = shows
+            .filter((show) => !show.movie)
+            .map((show) => show._id)
+
+        if (orphanShowIds.length) {
+            await Show.deleteMany({ _id: { $in: orphanShowIds } })
+        }
+
+        const validShows = shows.filter((show) => show.movie)
+
+        res.json({ success: true, shows: validShows })
+    }
+    catch (error) {
+        console.log("Error occured during fetching recent shows from the database. Error : ", error)
+        res.json({ success: false, message: error.message })
+    }
+}
+
 // API to get a single show from the database
 
 export const getShow = async (req, res) => {
     try {
 
-        const {movieId} = req.params
+        const { movieId } = req.params
 
         // get All upcoming shows for the movie 
-        const shows = await Show.find({movie: movieId, showDateTime: {$gte : new Date()}})
+        const shows = await Show.find({ movie: movieId, showDateTime: { $gte: new Date() } })
 
         // get movie gte current date otherwise just no dateTime will be visible
         const movie = await Movie.findById(movieId);
@@ -265,17 +295,17 @@ export const getShow = async (req, res) => {
             });
         }
 
-        const dateTime = {}; 
+        const dateTime = {};
 
         shows.forEach((show) => {
             const date = show.showDateTime.toISOString().split("T")[0];
-            if(!dateTime[date]){
+            if (!dateTime[date]) {
                 dateTime[date] = []
             }
-            dateTime[date].push({ time: show.showDateTime, showId: show._id  })
+            dateTime[date].push({ time: show.showDateTime, showId: show._id })
         })
 
-        res.json({success:true, movie, dateTime})
+        res.json({ success: true, movie, dateTime })
 
     }
     catch (error) {

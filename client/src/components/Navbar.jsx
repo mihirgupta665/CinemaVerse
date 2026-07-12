@@ -25,8 +25,8 @@ const Navbar = () => {
                 <Link className='border border-primary-dull rounded-full px-3 py-1 w-26 text-center' onClick={() => { isSetOpen(false); scrollTo(0, 0) }} to="/">Home</Link>
                 <Link className='border border-primary-dull rounded-full px-3 py-1 w-26 text-center' onClick={() => { isSetOpen(false); scrollTo(0, 0) }} to="/movies">Movies</Link>
                 <Link className='border border-primary-dull rounded-full px-3 py-1 w-26 text-center' onClick={() => { isSetOpen(false); scrollTo(0, 0) }} to="/">Theaters</Link>
-                <Link className='border border-primary-dull rounded-full px-3 py-1 w-26 text-center' onClick={() => { isSetOpen(false); scrollTo(0, 0) }} to="/">Releases</Link>
-                { favoriteMovies.length > 0 && <Link className='border border-primary-dull rounded-full px-3 py-1 w-26 text-center' onClick={() => { isSetOpen(false); scrollTo(0, 0) }} to="/favorite">Favorites</Link>}
+                <Link className='border border-primary-dull rounded-full px-3 py-1 w-26 text-center' onClick={() => { isSetOpen(false); scrollTo(0, 0) }} to="/releases">Releases</Link>
+                {favoriteMovies.length > 0 && <Link className='border border-primary-dull rounded-full px-3 py-1 w-26 text-center' onClick={() => { isSetOpen(false); scrollTo(0, 0) }} to="/favorite">Favorites</Link>}
             </div>
 
             <div className='flex items-center gap-8'>

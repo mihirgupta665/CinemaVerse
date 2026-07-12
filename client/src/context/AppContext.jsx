@@ -56,7 +56,12 @@ export const AppProvider = ({ children }) => {
 
             const { data } = await axios.get("/api/show/all")
             if (data.success) {
-                setShows((data.shows || []).filter(Boolean))
+                const showsData = (data.shows || []).filter(Boolean)
+                const refinedShows = showsData.map((show) => ({
+                    ...show,
+                    showDateTime: show.showDateTime ? new Date(show.showDateTime).toISOString() : null,
+                }))
+                setShows(refinedShows)
             }
             else {
                 toast.error(data.message)
