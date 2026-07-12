@@ -11,12 +11,20 @@ const DateSelect = ({ dateTime, id }) => {
     const [selected, setSelected] = useState(null)
 
     const onBookHandler = () => {
-        if(!selected){
-            return toast.error("Please Select a Date of Booking")
+        if (!selected) {
+            return toast.error("Please Select a Date of Booking");
         }
-        navigate(`/movies/${id}/${selected}`)
-        scrollTo(0,0)
-    }
+
+        navigate(`/movies/${id}/${selected}`);
+
+        requestAnimationFrame(() => {
+            window.scrollTo({
+                top: 0,
+                left: 0,
+                behavior: "instant",
+            });
+        });
+    };
 
     return (
         <div id="dateSelect" className='pt-30'>

@@ -137,6 +137,13 @@ const SeatLayout = () => {
     }, [user, id, date, selectedTime])
 
     useEffect(() => {
+        window.scrollTo({
+            top: 0,
+            behavior: "smooth",
+        });
+    }, [id, date]);
+
+    useEffect(() => {
         const seatBoard = seatBoardRef.current
         if (!seatBoard) return
 
