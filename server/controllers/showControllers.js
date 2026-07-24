@@ -321,3 +321,87 @@ export const getShow = async (req, res) => {
         res.json({ success: false, message: error.message })
     }
 }
+
+// API to get the latest movie trailers from TMDB
+export const getLatestTrailers = async (req, res) => {
+    try {
+        const response = await axios.get(
+            "https://api.themoviedb.org/3/movie/now_playing",
+            getTmdbRequestConfig()
+        );
+        const movies = response.data?.results?.slice(0, 8) || [];
+        
+        const trailerPromises = movies.map(async (movie) => {
+            try {
+                const videoRes = await axios.get(
+                    `https://api.themoviedb.org/3/movie/${movie.id}/videos`,
+                    getTmdbRequestConfig()
+                );
+                const videos = videoRes.data?.results || [];
+                // Find official trailer first, then any trailer, then any video
+                const trailer = videos.find(v => v.site === "YouTube" && v.type === "Trailer" && v.official) ||
+                                videos.find(v => v.site === "YouTube" && v.type === "Trailer") ||
+                                videos.find(v => v.site === "YouTube");
+                
+                if (trailer) {
+                    return {
+                        image: `https://img.youtube.com/vi/${trailer.key}/maxresdefault.jpg`,
+                        videoUrl: `https://www.youtube.com/watch?v=${trailer.key}`
+                    };
+                }
+            } catch (err) {
+                console.error(`Failed to fetch videos for movie ${movie.id}:`, err.message);
+            }
+            return null;
+        });
+
+        const trailers = (await Promise.all(trailerPromises)).filter(Boolean).slice(0, 4);
+
+        if (trailers.length < 4) {
+            const dummy = [
+                {
+                    image: "https://img.youtube.com/vi/WpW36ldAqnM/maxresdefault.jpg",
+                    videoUrl: 'https://www.youtube.com/watch?v=WpW36ldAqnM'
+                },
+                {
+                    image: "https://img.youtube.com/vi/-sAOWhvheK8/maxresdefault.jpg",
+                    videoUrl: 'https://www.youtube.com/watch?v=-sAOWhvheK8'
+                },
+                {
+                    image: "https://img.youtube.com/vi/1pHDWnXmK7Y/maxresdefault.jpg",
+                    videoUrl: 'https://www.youtube.com/watch?v=1pHDWnXmK7Y'
+                },
+                {
+                    image: "https://img.youtube.com/vi/umiKiW4En9g/maxresdefault.jpg",
+                    videoUrl: 'https://www.youtube.com/watch?v=umiKiW4En9g'
+                }
+            ];
+            while (trailers.length < 4) {
+                trailers.push(dummy[trailers.length]);
+            }
+        }
+
+        res.json({ success: true, trailers });
+    } catch (error) {
+        console.error("Error fetching latest trailers:", error.message);
+        const dummy = [
+            {
+                image: "https://img.youtube.com/vi/WpW36ldAqnM/maxresdefault.jpg",
+                videoUrl: 'https://www.youtube.com/watch?v=WpW36ldAqnM'
+            },
+            {
+                image: "https://img.youtube.com/vi/-sAOWhvheK8/maxresdefault.jpg",
+                videoUrl: 'https://www.youtube.com/watch?v=-sAOWhvheK8'
+            },
+            {
+                image: "https://img.youtube.com/vi/1pHDWnXmK7Y/maxresdefault.jpg",
+                videoUrl: 'https://www.youtube.com/watch?v=1pHDWnXmK7Y'
+            },
+            {
+                image: "https://img.youtube.com/vi/umiKiW4En9g/maxresdefault.jpg",
+                videoUrl: 'https://www.youtube.com/watch?v=umiKiW4En9g'
+            }
+        ];
+        res.json({ success: true, trailers: dummy });
+    }
+}
