@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from 'react'
 import { useParams } from 'react-router-dom'
 import BlurCircle from '../components/BlurCircle'
-import { Heart, PlayCircleIcon, StarIcon } from "lucide-react"
+import { Heart, PlayCircleIcon, StarIcon, XIcon } from "lucide-react"
+import ReactPlayer from 'react-player'
 import timeFormat from '../lib/timeFormat'
 import DateSelect from '../components/DateSelect'
 import MovieCard from '../components/MovieCard'
@@ -17,6 +18,7 @@ const MovieDetails = () => {
     const [show, setShow] = useState(null)
     const [isLoading, setIsLoading] = useState(true)
     const [isUnavailable, setIsUnavailable] = useState(false)
+    const [showTrailerModal, setShowTrailerModal] = useState(false)
 
     const getShow = async () => {
 
@@ -149,7 +151,16 @@ const MovieDetails = () => {
                     </p>
 
                     <div className='flex items-center flex-wrap gap-4 mt-4'>
-                        <button className='flex items-center gap-2 px-7 py-3 text-sm bg-gray-800 hover:bg-gray-900 transition rounded-md font-medium cursor-pointer active:scale-95'>
+                        <button 
+                            onClick={() => {
+                                if (movie.trailerUrl) {
+                                    setShowTrailerModal(true)
+                                } else {
+                                    toast.info("Trailer is not available for this movie.")
+                                }
+                            }}
+                            className='flex items-center gap-2 px-7 py-3 text-sm bg-gray-800 hover:bg-gray-900 transition rounded-md font-medium cursor-pointer active:scale-95'
+                        >
                             <PlayCircleIcon className='w-5 h-5' />
                             Watch Trailer
                         </button>
@@ -189,6 +200,33 @@ const MovieDetails = () => {
             <div className='flex justify-center mt-20'>
                 <button onClick={() => { navigate("/movies"); scrollTo(0, 0) }} className='px-10 py-3 text-sm bg-primary hover:bg-primary-dull transition rounded-md font-medium cursor-pointer'>Show More</button>
             </div>
+
+            {showTrailerModal && (
+                <div 
+                    className="fixed inset-0 z-[100] flex items-center justify-center bg-black/80 backdrop-blur-md transition-all duration-300"
+                    onClick={() => setShowTrailerModal(false)}
+                >
+                    <div 
+                        className="relative w-full max-w-4xl aspect-video bg-gray-900 border border-gray-700/50 rounded-xl overflow-hidden shadow-2xl p-2 m-4 scale-100 animate-in fade-in zoom-in-95 duration-200"
+                        onClick={(e) => e.stopPropagation()}
+                    >
+                        <button 
+                            className="absolute top-4 right-4 z-10 bg-black/60 hover:bg-black/80 text-white rounded-full p-2 border border-gray-700 transition active:scale-95 cursor-pointer"
+                            onClick={() => setShowTrailerModal(false)}
+                        >
+                            <XIcon className="w-5 h-5" />
+                        </button>
+                        <ReactPlayer 
+                            url={movie.trailerUrl} 
+                            src={movie.trailerUrl}
+                            controls={true} 
+                            playing={true} 
+                            width="100%" 
+                            height="100%" 
+                        />
+                    </div>
+                </div>
+            )}
 
         </div>
     )

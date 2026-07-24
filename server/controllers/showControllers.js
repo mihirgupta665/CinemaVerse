@@ -102,15 +102,15 @@ export const addShows = async (req, res) => {
 
         if (!movie) {
             // fetch movie details and credits from the TMDB API
-            // Fetch movie details and credits from TMDB API with retry
-            let movieDetailsResponse, movieCreditsResponse;
+            // Fetch movie details, credits, and videos from TMDB API with retry
+            let movieDetailsResponse, movieCreditsResponse, movieVideosResponse;
 
             const MAX_RETRIES = 5;
 
             for (let attempt = 1; attempt <= MAX_RETRIES; attempt++) {
                 try {
 
-                    [movieDetailsResponse, movieCreditsResponse] = await Promise.all([
+                    [movieDetailsResponse, movieCreditsResponse, movieVideosResponse] = await Promise.all([
 
                         axios.get(
                             `https://api.themoviedb.org/3/movie/${movieId}`,
@@ -120,7 +120,12 @@ export const addShows = async (req, res) => {
                         axios.get(
                             `https://api.themoviedb.org/3/movie/${movieId}/credits`,
                             getTmdbRequestConfig()
-                        )
+                        ),
+
+                        axios.get(
+                            `https://api.themoviedb.org/3/movie/${movieId}/videos`,
+                            getTmdbRequestConfig()
+                        ).catch(() => ({ data: { results: [] } }))
 
                     ]);
 
@@ -144,7 +149,14 @@ export const addShows = async (req, res) => {
 
             const movieApiData = movieDetailsResponse.data;
             const movieCreditsData = movieCreditsResponse.data;
-            // console.log("Movie Credits Data of response : ", movieCreditsResponse)
+            const movieVideosData = movieVideosResponse?.data?.results || [];
+
+            // Find official trailer first, then any trailer, then any video
+            const trailer = movieVideosData.find(v => v.site === "YouTube" && v.type === "Trailer" && v.official) ||
+                            movieVideosData.find(v => v.site === "YouTube" && v.type === "Trailer") ||
+                            movieVideosData.find(v => v.site === "YouTube");
+
+            const trailerUrl = trailer ? `https://www.youtube.com/watch?v=${trailer.key}` : "";
 
             const movieDetails = {
                 _id: movieId,
@@ -159,6 +171,7 @@ export const addShows = async (req, res) => {
                 tagline: movieApiData.tagline || "",
                 vote_average: movieApiData.vote_average,
                 runtime: movieApiData.runtime,
+                trailerUrl: trailerUrl,
             }
 
             const moviedoc = await Movie.create(movieDetails);
@@ -297,6 +310,29 @@ export const getShow = async (req, res) => {
                 success: false,
                 message: "This movie is no longer available.",
             });
+        }
+
+        // If movie doesn't have a trailerUrl, fetch it from TMDB on the fly
+        if (!movie.trailerUrl) {
+            try {
+                const videoRes = await axios.get(
+                    `https://api.themoviedb.org/3/movie/${movieId}/videos`,
+                    getTmdbRequestConfig()
+                ).catch(() => null);
+
+                if (videoRes && videoRes.data && videoRes.data.results) {
+                    const videos = videoRes.data.results;
+                    const trailer = videos.find(v => v.site === "YouTube" && v.type === "Trailer" && v.official) ||
+                                    videos.find(v => v.site === "YouTube" && v.type === "Trailer") ||
+                                    videos.find(v => v.site === "YouTube");
+                    if (trailer) {
+                        movie.trailerUrl = `https://www.youtube.com/watch?v=${trailer.key}`;
+                        await movie.save();
+                    }
+                }
+            } catch (err) {
+                console.error(`Failed to dynamically fetch trailer for movie ${movieId}:`, err.message);
+            }
         }
 
         const dateTime = {};
